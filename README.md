@@ -37,21 +37,30 @@ dashboard-ai/
 
 #### 1. Backend (NestJS)
 
-```cmd
-cd backend
-npm install
-npm run start:dev
-```
+1. Create a `.env` file in `backend/` with your Google Client ID:
+   ```env
+   GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+   ```
+
+2. Install and run:
+   ```cmd
+   cd backend
+   npm install
+   npm run start:dev
+   ```
 
 The backend will be available at: `http://localhost:3000`
 
-Available endpoints:
-- `GET /` - Welcome message
-- `GET /api/health` - Service health check
+Available endpoints (all use `/api/v1` prefix):
+- `GET /api/v1` - Welcome message
+- `GET /api/v1/health` - Service health check
+- `GET /api/v1/dashboard-info` - Protected endpoint (requires Google token)
 
 **📚 API Documentation:**
 - Swagger UI: `http://localhost:3000/api/docs`
 - API JSON: `http://localhost:3000/api/docs-json`
+
+**Note:** All API endpoints use versioning (v1) and the global prefix `/api`.
 
 #### 2. Frontend (React)
 
@@ -64,6 +73,54 @@ npm run dev
 ```
 
 The frontend will be available at: `http://localhost:5173`
+
+### 🔐 Google OAuth Setup
+
+To enable Google authentication:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Create OAuth 2.0 Client ID (Web application)
+3. Add authorized JavaScript origins:
+   - `http://localhost:5173` (frontend)
+   - `http://localhost:3000` (backend)
+4. Add authorized redirect URIs:
+   - `http://localhost:5173`
+5. Copy the Client ID
+
+6. Create `.env.local` in `frontend/`:
+   ```env
+   VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+   ```
+
+7. Create `.env` in `backend/`:
+   ```env
+   GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+   ```
+
+**Important:** Both frontend and backend must use the **same** Google Client ID.
+
+### 🔐 Google Login (Frontend)
+
+Enable Google OAuth login on the frontend:
+
+1. Create a `.env.local` file in `frontend/` with:
+	```env
+	VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+	```
+2. Install dependencies:
+	```cmd
+	cd frontend
+	npm install
+	```
+3. Run the dev server:
+	```cmd
+	npm run dev
+	```
+
+Notes:
+- The app is wrapped with `GoogleOAuthProvider` using `VITE_GOOGLE_CLIENT_ID`.
+- The login button component is in `src/components/GoogleLoginButton.tsx`.
+- After login, user info is displayed and you can logout.
 
 ### 🐳 Docker (Recommended)
 

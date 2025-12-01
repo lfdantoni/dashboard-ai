@@ -1,9 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Configurar prefijo global
+  app.setGlobalPrefix('api');
+
+  // Habilitar versionado
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
 
   // Habilitar CORS para el frontend
   app.enableCors({
@@ -17,6 +27,8 @@ async function bootstrap() {
     .setDescription('API REST para Dashboard AI')
     .setVersion('1.0')
     .addTag('health')
+    .addTag('dashboard')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
