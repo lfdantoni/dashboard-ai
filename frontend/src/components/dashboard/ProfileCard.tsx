@@ -10,6 +10,7 @@ export interface ProfileCardProps {
   stats?: Array<{ icon: React.ReactNode; value: number; color?: string }>;
   onRefresh?: () => void;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const DEFAULT_STATS = [
@@ -26,12 +27,13 @@ export const ProfileCard = ({
   avatar,
   stats = [],
   onRefresh,
-  className 
+  className,
+  style
 }: ProfileCardProps) => {
   const displayStats = stats.length > 0 ? stats : DEFAULT_STATS;
 
   return (
-    <Card className={clsx(PROFILE_CARD_BASE_CLASSES, className)}>
+    <Card className={clsx(PROFILE_CARD_BASE_CLASSES, className)} style={style}>
       <div className="w-full flex justify-between items-center mb-4">
         <span className="font-semibold">Profile</span>
         {onRefresh && (

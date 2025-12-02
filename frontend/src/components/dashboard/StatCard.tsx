@@ -10,6 +10,7 @@ export interface StatCardProps {
   variant?: 'default' | 'yellow' | 'green' | 'dark';
   children?: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const TEXT_COLOR_CLASSES = {
@@ -26,12 +27,13 @@ export const StatCard = ({
   trend, 
   variant = 'default',
   children,
-  className 
+  className,
+  style
 }: StatCardProps) => {
   const textColor = TEXT_COLOR_CLASSES[variant];
   
   return (
-    <Card variant={variant} className={clsx('min-h-[190px]', className)}>
+    <Card variant={variant} className={clsx('min-h-[190px]', className)} style={style}>
       <div>
         <div className={clsx('text-sm opacity-80', textColor)}>{label}</div>
         <div className={clsx('text-3xl font-bold my-2', textColor)}>{value}</div>

@@ -13,6 +13,7 @@ export interface BookingCardProps {
   onEdit?: () => void;
   onView?: () => void;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const BOOKING_CARD_BASE_CLASSES = 'rounded-2xl p-5 flex flex-col gap-4';
@@ -25,10 +26,11 @@ export const BookingCard = ({
   participants = [],
   onEdit,
   onView,
-  className 
+  className,
+  style
 }: BookingCardProps) => {
   return (
-    <Card className={clsx(BOOKING_CARD_BASE_CLASSES, className)}>
+    <Card className={clsx(BOOKING_CARD_BASE_CLASSES, className)} style={style}>
       <div className="flex justify-between items-center">
         <span className="font-semibold text-base">{title}</span>
         {status === 'active' && (
