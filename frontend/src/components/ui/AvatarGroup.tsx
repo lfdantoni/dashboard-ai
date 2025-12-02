@@ -1,5 +1,5 @@
+import clsx from 'clsx';
 import { Avatar } from './Avatar';
-import './AvatarGroup.css';
 
 export interface AvatarGroupProps {
   avatars: Array<{ src?: string; alt?: string }>;
@@ -14,24 +14,24 @@ export const AvatarGroup = ({
   maxVisible = 3, 
   size = 'medium',
   showCount = true,
-  className = '' 
+  className 
 }: AvatarGroupProps) => {
   const visibleAvatars = avatars.slice(0, maxVisible);
   const remainingCount = avatars.length - maxVisible;
 
   return (
-    <div className={`avatar-group ${className}`.trim()}>
+    <div className={clsx('flex items-center', className)}>
       {visibleAvatars.map((avatar, index) => (
         <Avatar
           key={index}
           src={avatar.src}
           alt={avatar.alt}
           size={size}
-          className={index > 0 ? 'avatar-overlap' : ''}
+          className={clsx(index > 0 && '-ml-2.5')}
         />
       ))}
       {remainingCount > 0 && showCount && (
-        <Avatar size={size} className="avatar-overlap avatar-count">
+        <Avatar size={size} className="-ml-2.5 bg-accent text-black font-semibold">
           +{remainingCount}
         </Avatar>
       )}

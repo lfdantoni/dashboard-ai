@@ -14,7 +14,6 @@ import { Timeline } from '../components/dashboard/Timeline';
 import { Card } from '../components/ui/Card';
 import { AvatarGroup } from '../components/ui/AvatarGroup';
 import { ArrowUpRight, Users, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
-import './Dashboard.css';
 
 export const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -123,14 +122,14 @@ export const Dashboard = () => {
   ];
 
   return (
-    <div className="dashboard-container">
+    <div className="grid grid-cols-[80px_1fr_auto] min-h-screen w-full bg-background font-sans overflow-x-hidden">
       <Sidebar />
 
-      <main className="main-content">
-        <header className="top-header">
-          <div className="nav-links">
-            <span className="nav-link active">Overview</span>
-            <span className="nav-link">Reports</span>
+      <main className="p-8 overflow-y-auto">
+        <header className="flex justify-between items-center mb-8">
+          <div className="flex gap-8">
+            <span className="text-primary font-medium cursor-pointer border-b-2 border-primary pb-2">Overview</span>
+            <span className="text-gray-500 font-medium cursor-pointer hover:text-primary">Reports</span>
           </div>
           
           <SearchBar placeholder="Search Rooms" />
@@ -139,7 +138,7 @@ export const Dashboard = () => {
         <PageHeader
           title="Main Dashboard"
           action={
-            <div className="manage-action">
+            <div className="flex items-center gap-2 text-primary cursor-pointer">
               <span>Manage</span>
               <ChevronDown size={16} />
             </div>
@@ -148,18 +147,22 @@ export const Dashboard = () => {
 
         <Tabs items={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        <div className="stats-grid">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] auto-rows-[190px] gap-6 mb-8">
           <ProfileCard
             name={user?.name || 'Kristin Watson'}
             role="Design Manager"
             avatar={user?.picture}
+            className="animate-fade-in-up"
+            style={{ animationDelay: '0.1s' }}
           />
 
           <StatCard
             label="Today's Earning"
             value="$2890"
+            className="animate-fade-in-up"
+            style={{ animationDelay: '0.2s' }}
           >
-            <svg viewBox="0 0 100 40" className="earning-chart">
+            <svg viewBox="0 0 100 40" className="w-full h-[50px] overflow-visible">
               <path d="M0 30 Q 20 10, 40 25 T 80 15 T 100 5" fill="none" stroke="#006D77" strokeWidth="3" />
             </svg>
           </StatCard>
@@ -169,38 +172,42 @@ export const Dashboard = () => {
             value="20"
             variant="yellow"
             icon={<Users size={40} opacity={0.2} />}
+            className="animate-fade-in-up"
+            style={{ animationDelay: '0.3s' }}
           />
 
           <StatCard
             label="Today's Bookings"
             value="24"
             trend="+12%"
+            className="animate-fade-in-up"
+            style={{ animationDelay: '0.4s' }}
           >
-            <div className="stat-content">
-              <div className="stat-label">Total Balance</div>
-              <div className="stat-value-large">
-                $2M <span className="stat-value-small">+</span>
+            <div className="mt-4">
+              <div className="text-sm opacity-80">Total Balance</div>
+              <div className="text-xl font-bold text-secondary">
+                $2M <span className="text-sm text-gray-500">+</span>
               </div>
             </div>
           </StatCard>
 
-          <Card variant="dark">
+          <Card variant="dark" className="animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
             <div>
-              <div className="discount-title">20% OFF</div>
-              <div className="discount-subtitle">On your first booking</div>
+              <div className="text-2xl font-bold text-white">20% OFF</div>
+              <div className="text-sm opacity-80 text-white">On your first booking</div>
             </div>
-            <button className="discount-button">
+            <button className="mt-4 bg-white/10 text-white border border-white/20 w-fit px-4 py-2 rounded-lg cursor-pointer hover:bg-white/15">
               NEWBIE20
             </button>
-            <div className="discount-copy">COPY CODE</div>
+            <div className="text-[0.7rem] mt-2 opacity-60 text-white">COPY CODE</div>
           </Card>
 
-          <Card variant="green">
+          <Card variant="green" className="animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
             <div>
-              <div className="meeting-title">Design Meetings</div>
-              <div className="meeting-time">11 Min Left</div>
+              <div className="font-bold text-white">Design Meetings</div>
+              <div className="text-sm opacity-80 text-white">11 Min Left</div>
             </div>
-            <div className="meeting-footer">
+            <div className="flex justify-between items-center mt-4">
               <AvatarGroup
                 avatars={[
                   { src: 'https://i.pravatar.cc/100?img=1', alt: 'User 1' },
@@ -208,7 +215,7 @@ export const Dashboard = () => {
                 ]}
                 maxVisible={2}
               />
-              <div className="meeting-icon-wrapper">
+              <div className="bg-accent rounded-full p-1.5">
                 <ArrowUpRight size={16} color="black" />
               </div>
             </div>
@@ -220,7 +227,7 @@ export const Dashboard = () => {
           action={<span>Check All &gt;</span>}
         />
 
-        <div className="bookings-list">
+        <div className="grid grid-cols-2 gap-6">
           {bookings.map((booking, index) => (
             <BookingCard
               key={index}
@@ -228,12 +235,14 @@ export const Dashboard = () => {
               time={booking.time}
               tags={booking.tags}
               participants={booking.participants}
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${(index + 1) * 0.2}s` }}
             />
           ))}
         </div>
       </main>
 
-      <aside className="right-panel">
+      <aside className="bg-white p-8 border-l border-[#eef2f6] w-[350px] box-border">
         <UserMenu
           userName={user?.name || 'Thomas Gepsan'}
           userRole="Super Admin"

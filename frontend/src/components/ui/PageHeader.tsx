@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import './PageHeader.css';
+import clsx from 'clsx';
 
 export interface PageHeaderProps {
   title: string;
@@ -8,14 +8,14 @@ export interface PageHeaderProps {
   className?: string;
 }
 
-export const PageHeader = ({ title, subtitle, action, className = '' }: PageHeaderProps) => {
+export const PageHeader = ({ title, subtitle, action, className }: PageHeaderProps) => {
   return (
-    <div className={`page-header ${className}`.trim()}>
+    <div className={clsx('flex justify-between items-center mb-6', className)}>
       <div>
-        <h1>{title}</h1>
-        {subtitle && <p className="page-header-subtitle">{subtitle}</p>}
+        <h1 className="m-0 text-3xl font-bold text-gray-900">{title}</h1>
+        {subtitle && <p className="mt-2 mb-0 text-base text-gray-500">{subtitle}</p>}
       </div>
-      {action && <div className="page-header-action">{action}</div>}
+      {action && <div className="flex items-center gap-2">{action}</div>}
     </div>
   );
 };

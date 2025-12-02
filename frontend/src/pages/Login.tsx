@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import { GoogleLoginButton } from '../components/GoogleLoginButton';
 import { Card, PageHeader, Button } from '../components/ui';
 import { useEffect } from 'react';
-import '../App.css';
 
 export const Login = () => {
   const { login, user } = useAuth();
@@ -21,22 +20,22 @@ export const Login = () => {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className="w-full min-h-screen">
+      <header className="min-h-screen flex flex-col items-center justify-center p-8">
         <PageHeader
           title="🔐 Login"
           subtitle="Sign in with your Google account"
         />
         
-        <Card>
-          <h2>Authentication Required</h2>
-          <p className="login-description">
+        <Card className="max-w-[500px]">
+          <h2 className="mt-0 text-primary">Authentication Required</h2>
+          <p className="mb-6 text-gray-500">
             Please login to access the dashboard
           </p>
           <GoogleLoginButton onLogin={handleLogin} />
         </Card>
 
-        <div className="links">
+        <div className="flex gap-6 mt-8 flex-wrap justify-center">
           <Button variant="ghost" onClick={() => navigate('/')}>
             ← Back to Home
           </Button>

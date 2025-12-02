@@ -1,8 +1,8 @@
 import { Edit2, ArrowUpRight } from 'lucide-react';
+import clsx from 'clsx';
 import { Card } from '../ui/Card';
 import { AvatarGroup } from '../ui/AvatarGroup';
 import { Badge } from '../ui/Badge';
-import './BookingCard.css';
 
 export interface BookingCardProps {
   title: string;
@@ -15,6 +15,8 @@ export interface BookingCardProps {
   className?: string;
 }
 
+const BOOKING_CARD_BASE_CLASSES = 'rounded-2xl p-5 flex flex-col gap-4';
+
 export const BookingCard = ({ 
   title, 
   time, 
@@ -23,19 +25,19 @@ export const BookingCard = ({
   participants = [],
   onEdit,
   onView,
-  className = '' 
+  className 
 }: BookingCardProps) => {
   return (
-    <Card className={`booking-card ${className}`.trim()}>
-      <div className="booking-header">
-        <span className="booking-title">{title}</span>
+    <Card className={clsx(BOOKING_CARD_BASE_CLASSES, className)}>
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-base">{title}</span>
         {status === 'active' && (
-          <div className="booking-status-indicator" />
+          <div className="w-2.5 h-2.5 bg-[#A7F3D0] rounded-full" />
         )}
       </div>
-      <div className="booking-time">{time}</div>
+      <div className="text-sm text-gray-500">{time}</div>
       {tags.length > 0 && (
-        <div className="booking-tags">
+        <div className="flex gap-2 flex-wrap">
           {tags.map((tag, index) => (
             <Badge key={index} variant={tag.variant || 'default'}>
               {tag.label}
@@ -43,7 +45,7 @@ export const BookingCard = ({
           ))}
         </div>
       )}
-      <div className="booking-footer">
+      <div className="flex justify-between items-center mt-2">
         {participants.length > 0 && (
           <AvatarGroup 
             avatars={participants} 
@@ -51,10 +53,10 @@ export const BookingCard = ({
             size="medium"
           />
         )}
-        <div className="booking-actions">
+        <div className="flex gap-2">
           {onEdit && (
             <button 
-              className="booking-action-btn"
+              className="p-1.5 rounded-full border border-gray-200 bg-white cursor-pointer flex items-center justify-center transition-all duration-200 hover:bg-gray-100"
               onClick={onEdit}
               aria-label="Edit booking"
             >
@@ -63,7 +65,7 @@ export const BookingCard = ({
           )}
           {onView && (
             <button 
-              className="booking-action-btn booking-action-btn-primary"
+              className="p-1.5 rounded-full bg-primary border-none cursor-pointer flex items-center justify-center transition-all duration-200 hover:bg-[#005a63]"
               onClick={onView}
               aria-label="View booking"
             >

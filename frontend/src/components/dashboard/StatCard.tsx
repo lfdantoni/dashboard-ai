@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
+import clsx from 'clsx';
 import { Card } from '../ui/Card';
-import './StatCard.css';
 
 export interface StatCardProps {
   label: string;
@@ -12,6 +12,13 @@ export interface StatCardProps {
   className?: string;
 }
 
+const TEXT_COLOR_CLASSES = {
+  default: 'text-gray-900',
+  yellow: 'text-gray-900',
+  green: 'text-white',
+  dark: 'text-white',
+} as const;
+
 export const StatCard = ({ 
   label, 
   value, 
@@ -19,20 +26,22 @@ export const StatCard = ({
   trend, 
   variant = 'default',
   children,
-  className = '' 
+  className 
 }: StatCardProps) => {
+  const textColor = TEXT_COLOR_CLASSES[variant];
+  
   return (
-    <Card variant={variant} className={`stat-card ${className}`.trim()}>
+    <Card variant={variant} className={clsx('min-h-[190px]', className)}>
       <div>
-        <div className="stat-label">{label}</div>
-        <div className="stat-value">{value}</div>
+        <div className={clsx('text-sm opacity-80', textColor)}>{label}</div>
+        <div className={clsx('text-3xl font-bold my-2', textColor)}>{value}</div>
         {trend && (
-          <div className="stat-trend">
+          <div className="bg-[#E0F2F1] px-2 py-1 rounded-lg text-xs text-primary h-fit inline-block mt-2">
             {trend}
           </div>
         )}
       </div>
-      {icon && <div className="stat-icon">{icon}</div>}
+      {icon && <div className="absolute bottom-4 right-4 opacity-20">{icon}</div>}
       {children}
     </Card>
   );
