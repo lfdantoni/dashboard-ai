@@ -83,3 +83,11 @@
   color: white;
 }
 
+.calendar-nav-btn .chevron-left {
+  transform: rotate(90deg);
+}
+
+.calendar-nav-btn .chevron-right {
+  transform: rotate(-90deg);
+}
+

@@ -14,7 +14,7 @@ export const Home = () => {
         <Card>
           <h2>Get Started</h2>
           <p>A full-stack application with React and NestJS</p>
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+          <div className="home-actions">
             <Link to="/login">
               <Button>Login with Google</Button>
             </Link>

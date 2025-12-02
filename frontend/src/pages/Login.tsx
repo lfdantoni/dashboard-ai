@@ -30,7 +30,7 @@ export const Login = () => {
         
         <Card>
           <h2>Authentication Required</h2>
-          <p style={{ marginBottom: '1.5rem', color: '#888' }}>
+          <p className="login-description">
             Please login to access the dashboard
           </p>
           <GoogleLoginButton onLogin={handleLogin} />

@@ -39,14 +39,14 @@ export const Calendar = ({
             onClick={onPrevMonth}
             aria-label="Previous month"
           >
-            <ChevronDown size={16} style={{ transform: 'rotate(90deg)' }} />
+            <ChevronDown size={16} className="chevron-left" />
           </button>
           <button 
             className="calendar-nav-btn"
             onClick={onNextMonth}
             aria-label="Next month"
           >
-            <ChevronDown size={16} style={{ transform: 'rotate(-90deg)' }} />
+            <ChevronDown size={16} className="chevron-right" />
           </button>
         </div>
       </div>

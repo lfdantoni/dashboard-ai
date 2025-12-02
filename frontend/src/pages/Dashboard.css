@@ -73,3 +73,86 @@
 
 /* UserMenu, ProfileCard, Calendar, and Timeline styles moved to respective components */
 
+/* Dashboard-specific inline style replacements */
+.manage-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #006D77;
+  cursor: pointer;
+}
+
+.earning-chart {
+  width: 100%;
+  height: 50px;
+  overflow: visible;
+}
+
+.stat-content {
+  margin-top: 1rem;
+}
+
+.stat-value-large {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #EF476F;
+}
+
+.stat-value-small {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.discount-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.discount-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.discount-button {
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.discount-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.discount-copy {
+  font-size: 0.7rem;
+  margin-top: 0.5rem;
+  opacity: 0.6;
+}
+
+.meeting-title {
+  font-weight: bold;
+}
+
+.meeting-time {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.meeting-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.meeting-icon-wrapper {
+  background: #FFD166;
+  border-radius: 50%;
+  padding: 0.3rem;
+}
+

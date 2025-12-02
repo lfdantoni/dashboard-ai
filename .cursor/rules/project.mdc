@@ -1,0 +1,78 @@
+---
+alwaysApply: true
+---
+# Cursor Rules for Dashboard AI
+
+## Project Overview
+This is a full-stack application with:
+- **Backend**: NestJS (TypeScript) with Express
+- **Frontend**: React 18 with TypeScript and Vite
+- **Authentication**: Google OAuth
+- **API Documentation**: Swagger/OpenAPI
+
+## Code Style & Conventions
+
+### TypeScript
+- Use TypeScript for all new code
+- Prefer explicit types over `any`
+- Use interfaces for object shapes, types for unions/intersections
+- Follow existing naming conventions (camelCase for variables/functions, PascalCase for classes/components)
+
+### Backend (NestJS)
+- Follow NestJS best practices and decorator patterns
+- Use dependency injection for services
+- Create entities in `src/entities/` directory
+- Use guards for authentication (see `src/guards/`)
+- Use decorators for custom functionality (see `src/decorators/`)
+- API endpoints should be versioned with `/api/v1` prefix
+- Document all endpoints with Swagger decorators
+
+### Frontend (React)
+- Use functional components with hooks
+- Keep components in `src/components/` directory
+- Keep pages in `src/pages/` directory
+- Use TypeScript interfaces for props
+- Prefer named exports for components
+- Use context API for global state (see `src/context/`)
+- - Follow the user’s requirements carefully & to the letter.
+- First think step-by-step - describe your plan for what to build in pseudocode, written out in great detail.
+- Confirm, then write code!
+- Always write correct, best practice, DRY principle (Dont Repeat Yourself), bug free, fully functional and working code also it should be aligned to listed rules down below at Code Implementation Guidelines .
+- Focus on easy and readability code, over being performant.
+- Fully implement all requested functionality.
+- Leave NO todo’s, placeholders or missing pieces.
+- Ensure code is complete! Verify thoroughly finalised.
+- Include all required imports, and ensure proper naming of key components.
+- Be concise Minimize any other prose.
+- If you think there might not be a correct answer, you say so.
+- If you do not know the answer, say so, instead of guessing.
+
+## File Organization
+- Backend code goes in `backend/src/`
+- Frontend code goes in `frontend/src/`
+- Keep related files together (entities, guards, decorators, etc.)
+- Use descriptive file names that match their exports
+
+## API Communication
+- Frontend uses Vite proxy for `/api/*` routes
+- Backend CORS is configured for `http://localhost:5173`
+- Use Axios for HTTP requests in the frontend
+- Include authentication tokens in protected requests
+
+## Environment Variables
+- Backend: `.env` in `backend/` directory
+- Frontend: `.env.local` in `frontend/` directory
+- Never commit sensitive values to version control
+
+## Testing
+- Write tests for new features when appropriate
+- Backend tests use Jest
+- Follow existing test patterns
+
+## General Guidelines
+- Write clean, readable, and maintainable code
+- Add comments for complex logic
+- Follow existing code patterns and structure
+- Keep functions focused and single-purpose
+- Handle errors appropriately with proper error messages
+

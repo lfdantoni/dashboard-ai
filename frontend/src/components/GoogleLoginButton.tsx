@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
+import './GoogleLoginButton.css';
 
 interface GoogleJwtPayload {
   iss: string;
@@ -54,9 +55,9 @@ export const GoogleLoginButton: React.FC<Props> = ({ onLogin }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className="google-login-container">
       <GoogleLogin onSuccess={handleSuccess} onError={() => setError('Login Failed')} />
-      {error && <p style={{ color: '#ff6b6b', marginTop: '0.5rem' }}>{error}</p>}
+      {error && <p className="google-login-error">{error}</p>}
     </div>
   );
 };

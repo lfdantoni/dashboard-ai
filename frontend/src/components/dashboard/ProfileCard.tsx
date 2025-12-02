@@ -29,7 +29,7 @@ export const ProfileCard = ({
   const displayStats = stats.length > 0 ? stats : defaultStats;
 
   return (
-    <Card className={`card-profile ${className}`.trim()} style={{ gridRow: 'span 2' }}>
+    <Card className={`card-profile grid-span-2 ${className}`.trim()}>
       <div className="profile-card-header">
         <span className="profile-card-title">Profile</span>
         {onRefresh && (

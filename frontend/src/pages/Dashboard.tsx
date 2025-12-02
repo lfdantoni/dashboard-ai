@@ -139,7 +139,7 @@ export const Dashboard = () => {
         <PageHeader
           title="Main Dashboard"
           action={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#006D77', cursor: 'pointer' }}>
+            <div className="manage-action">
               <span>Manage</span>
               <ChevronDown size={16} />
             </div>
@@ -159,7 +159,7 @@ export const Dashboard = () => {
             label="Today's Earning"
             value="$2890"
           >
-            <svg viewBox="0 0 100 40" style={{ width: '100%', height: '50px', overflow: 'visible' }}>
+            <svg viewBox="0 0 100 40" className="earning-chart">
               <path d="M0 30 Q 20 10, 40 25 T 80 15 T 100 5" fill="none" stroke="#006D77" strokeWidth="3" />
             </svg>
           </StatCard>
@@ -176,31 +176,31 @@ export const Dashboard = () => {
             value="24"
             trend="+12%"
           >
-            <div style={{ marginTop: '1rem' }}>
+            <div className="stat-content">
               <div className="stat-label">Total Balance</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#EF476F' }}>
-                $2M <span style={{ fontSize: '0.8rem', color: '#888' }}>+</span>
+              <div className="stat-value-large">
+                $2M <span className="stat-value-small">+</span>
               </div>
             </div>
           </StatCard>
 
           <Card variant="dark">
             <div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>20% OFF</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>On your first booking</div>
+              <div className="discount-title">20% OFF</div>
+              <div className="discount-subtitle">On your first booking</div>
             </div>
-            <button style={{ marginTop: '1rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', width: 'fit-content', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}>
+            <button className="discount-button">
               NEWBIE20
             </button>
-            <div style={{ fontSize: '0.7rem', marginTop: '0.5rem', opacity: 0.6 }}>COPY CODE</div>
+            <div className="discount-copy">COPY CODE</div>
           </Card>
 
           <Card variant="green">
             <div>
-              <div style={{ fontWeight: 'bold' }}>Design Meetings</div>
-              <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>11 Min Left</div>
+              <div className="meeting-title">Design Meetings</div>
+              <div className="meeting-time">11 Min Left</div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+            <div className="meeting-footer">
               <AvatarGroup
                 avatars={[
                   { src: 'https://i.pravatar.cc/100?img=1', alt: 'User 1' },
@@ -208,7 +208,7 @@ export const Dashboard = () => {
                 ]}
                 maxVisible={2}
               />
-              <div style={{ background: '#FFD166', borderRadius: '50%', padding: '0.3rem' }}>
+              <div className="meeting-icon-wrapper">
                 <ArrowUpRight size={16} color="black" />
               </div>
             </div>
