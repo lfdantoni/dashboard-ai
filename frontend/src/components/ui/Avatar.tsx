@@ -22,7 +22,7 @@ const SIZE_CLASSES = {
 export const Avatar = ({ src, alt = 'avatar', size = 'medium', children, className, onClick }: AvatarProps) => {
   const [hasError, setHasError] = useState(false);
   
-  // Resetear el error cuando cambia el src
+  // Reset error when src changes
   useEffect(() => {
     setHasError(false);
   }, [src]);
@@ -34,7 +34,7 @@ export const Avatar = ({ src, alt = 'avatar', size = 'medium', children, classNa
   );
 
   const handleImageError = () => {
-    // Solo activar error si había un src válido
+    // Only trigger error if there was a valid src
     if (src && src.trim()) {
       setHasError(true);
     }
@@ -48,9 +48,9 @@ export const Avatar = ({ src, alt = 'avatar', size = 'medium', children, classNa
     );
   }
 
-  // Determinar qué imagen mostrar:
-  // 1. Si hay src válido y no hay error → usar src del usuario
-  // 2. Si no hay src o hay error → usar imagen por defecto
+  // Determine which image to show:
+  // 1. If there's a valid src and no error → use user's src
+  // 2. If there's no src or there's an error → use default image
   const hasValidSrc = src && src.trim();
   const imageSrc = (hasValidSrc && !hasError) ? src : DEFAULT_AVATAR;
 
