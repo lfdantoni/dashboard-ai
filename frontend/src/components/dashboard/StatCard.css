@@ -1,0 +1,33 @@
+.stat-card {
+  min-height: 190px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.stat-trend {
+  background: #E0F2F1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #006D77;
+  height: fit-content;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.stat-icon {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  opacity: 0.2;
+}
+

@@ -1,27 +1,30 @@
 import { Link } from 'react-router-dom';
+import { Card, Button, PageHeader } from '../components/ui';
 import '../App.css';
 
 export const Home = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🚀 Dashboard AI</h1>
-        <p className="subtitle">Welcome to Dashboard AI</p>
+        <PageHeader
+          title="🚀 Dashboard AI"
+          subtitle="Welcome to Dashboard AI"
+        />
         
-        <div className="card">
+        <Card>
           <h2>Get Started</h2>
           <p>A full-stack application with React and NestJS</p>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
             <Link to="/login">
-              <button>Login with Google</button>
+              <Button>Login with Google</Button>
             </Link>
             <Link to="/dashboard">
-              <button>Go to Dashboard</button>
+              <Button variant="secondary">Go to Dashboard</Button>
             </Link>
           </div>
-        </div>
+        </Card>
 
-        <div className="card">
+        <Card>
           <h2>Features</h2>
           <ul className="health-info">
             <li>✅ Google OAuth Authentication</li>
@@ -30,7 +33,7 @@ export const Home = () => {
             <li>✅ Swagger Documentation</li>
             <li>✅ Docker Support</li>
           </ul>
-        </div>
+        </Card>
 
         <div className="links">
           <a href="http://localhost:3000/api/docs" target="_blank" rel="noopener noreferrer">

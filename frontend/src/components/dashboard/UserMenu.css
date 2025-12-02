@@ -1,0 +1,62 @@
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.user-profile.pos-relative {
+  position: relative;
+}
+
+.user-profile-name {
+  text-align: right;
+  cursor: pointer;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.user-role {
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.user-profile-avatar {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.user-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: #fff;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 0.5rem;
+  min-width: 160px;
+  z-index: 20;
+  border: 1px solid #eef2f6;
+}
+
+.user-menu button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #2c3e50;
+  transition: background 0.2s ease;
+}
+
+.user-menu button:hover {
+  background: #f8fafc;
+}
+

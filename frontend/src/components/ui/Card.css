@@ -1,0 +1,28 @@
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.card-yellow {
+  background-color: #FFD166;
+  color: #1a1a1a;
+}
+
+.card-green {
+  background-color: #006D77;
+  color: white;
+}
+
+.card-dark {
+  background-color: #073B4C;
+  color: white;
+}
+
