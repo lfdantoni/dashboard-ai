@@ -12,5 +12,7 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
-  }
+  },
+  // Copy runtime-config.js to dist during build
+  publicDir: 'public',
 })
