@@ -29,7 +29,7 @@ FROM node:22.13.1-alpine AS production
 WORKDIR /app
 
 # Install serve to host frontend static files
-RUN npm install -g serve pm2
+RUN npm install -g serve
 
 # Copy backend build and dependencies
 COPY --from=backend-build /app/backend/dist ./backend/dist
@@ -39,10 +39,16 @@ COPY --from=backend-build /app/backend/package*.json ./backend/
 # Copy frontend build
 COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 
-# Create startup script
+# Create startup script with proper process management
 RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'set -e' >> /app/start.sh && \
     echo 'cd /app/backend && node dist/main.js &' >> /app/start.sh && \
-    echo 'serve -s /app/frontend/dist -l 5173' >> /app/start.sh && \
+    echo 'BACKEND_PID=$!' >> /app/start.sh && \
+    echo 'sleep 3' >> /app/start.sh && \
+    echo 'serve -s /app/frontend/dist -l 5173 &' >> /app/start.sh && \
+    echo 'FRONTEND_PID=$!' >> /app/start.sh && \
+    echo 'trap "kill $BACKEND_PID $FRONTEND_PID" SIGTERM SIGINT' >> /app/start.sh && \
+    echo 'wait $BACKEND_PID $FRONTEND_PID' >> /app/start.sh && \
     chmod +x /app/start.sh
 
 # Expose ports
@@ -50,7 +56,7 @@ EXPOSE 3000 5173
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
-  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+  CMD node -e "require('http').get('http://localhost:3000/api/v1/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # Start both services
 CMD ["/bin/sh", "/app/start.sh"]

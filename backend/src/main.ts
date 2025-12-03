@@ -16,8 +16,12 @@ async function bootstrap() {
   });
 
   // Habilitar CORS para el frontend
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:5173'];
+
   app.enableCors({
-    origin: 'http://localhost:5173', // URL del frontend React
+    origin: allowedOrigins,
     credentials: true,
   });
 
