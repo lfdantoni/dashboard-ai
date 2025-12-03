@@ -8,8 +8,14 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 
-# Copy frontend source and build
+# Copy frontend source
 COPY frontend/ ./
+
+# Build argument for Google Client ID (needed at build time for Vite)
+ARG VITE_GOOGLE_CLIENT_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
+# Build frontend (Vite injects VITE_* vars at build time)
 RUN npm run build
 
 # Stage 2: Build Backend
