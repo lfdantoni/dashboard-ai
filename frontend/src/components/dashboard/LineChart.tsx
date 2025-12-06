@@ -13,12 +13,13 @@ import { fetchChartData, ChartDataPoint } from '../../data/dashboard';
 
 interface LineChartProps {
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const ranges = ['By month', 'Last week', 'Last month', 'Last 3 months', 'Last year'];
 
-export const LineChart = ({ className }: LineChartProps) => {
+export const LineChart = ({ className, style }: LineChartProps) => {
   // Create today once and memoize it to avoid recreating on every render
   const today = useMemo(() => {
     const date = new Date();
@@ -293,7 +294,7 @@ export const LineChart = ({ className }: LineChartProps) => {
   };
 
   return (
-    <div className={`bg-white rounded-lg p-6 ${className}`}>
+    <div className={`bg-white rounded-lg p-6 ${className}`} style={style}>
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
