@@ -12,4 +12,5 @@ export { Sidebar } from './Sidebar';
 export type { SidebarProps } from './Sidebar';
 export { ProfileCard } from './ProfileCard';
 export type { ProfileCardProps } from './ProfileCard';
+export { LineChart } from './LineChart';
 

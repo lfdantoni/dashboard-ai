@@ -11,6 +11,7 @@ import { ProfileCard } from '../components/dashboard/ProfileCard';
 import { BookingCard } from '../components/dashboard/BookingCard';
 import { Calendar } from '../components/dashboard/Calendar';
 import { Timeline } from '../components/dashboard/Timeline';
+import { LineChart } from '../components/dashboard/LineChart';
 import { Card } from '../components/ui/Card';
 import { AvatarGroup } from '../components/ui/AvatarGroup';
 import { ArrowUpRight, Users, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
@@ -227,7 +228,7 @@ export const Dashboard = () => {
           action={<span>Check All &gt;</span>}
         />
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6 mb-8">
           {bookings.map((booking, index) => (
             <BookingCard
               key={index}
@@ -240,6 +241,8 @@ export const Dashboard = () => {
             />
           ))}
         </div>
+
+        <LineChart className="animate-fade-in-up" style={{ animationDelay: '0.8s' }} />
       </main>
 
       <aside className="bg-white p-8 border-l border-[#eef2f6] w-[350px] box-border">
