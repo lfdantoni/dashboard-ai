@@ -143,6 +143,35 @@ docker-compose -f docker-compose-local.yml logs -f backend
 
 **Note:** Changes to your source code will automatically trigger reloads in both services without rebuilding containers.
 
+#### Installing npm Packages with Docker
+
+**⚠️ Important:** When developing with Docker, always install npm packages **inside the Docker container** to ensure compatibility with the production environment (Linux). This guarantees that the package versions and native binaries match what will be used in production.
+
+**Install packages in the frontend container:**
+```cmd
+docker exec -it dashboard-ai-frontend npm install <package-name> --save
+# Example: docker exec -it dashboard-ai-frontend npm install uuid4 --save
+```
+
+**Install packages in the backend container:**
+```cmd
+docker exec -it dashboard-ai-backend npm install <package-name> --save
+# Example: docker exec -it dashboard-ai-backend npm install uuid4 --save
+```
+
+**How it works:**
+- The `package.json` and `package-lock.json` files are mounted from your host, so changes made inside the container are automatically synced to your local files.
+- The `node_modules` directory uses a named volume (Linux binaries), ensuring compatibility with production.
+- After installing a package, the changes will appear in your local `package.json` and `package-lock.json` files automatically.
+
+**Why use Docker for package installation?**
+- ✅ Ensures Linux-compatible binaries (matches production environment)
+- ✅ Avoids Windows/Linux compatibility issues with native dependencies
+- ✅ Guarantees consistent package resolution across environments
+- ✅ Prevents issues with optional dependencies (like `@rollup/rollup-linux-x64-gnu`)
+
+**Alternative (not recommended for production):** Installing packages locally with `npm install` may work, but can cause issues when deploying to production if native binaries differ between Windows and Linux.
+
 ### Production Deployment
 
 #### Deploy Both Services Together
