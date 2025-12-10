@@ -16,10 +16,13 @@ dashboard-ai/
 │   ├── package.json
 │   └── nest-cli.json
 │
-├── package.json       # Root package.json with npm workspaces
-├── Dockerfile.frontend # Frontend Dockerfile (independent deployment)
-├── Dockerfile.backend  # Backend Dockerfile (independent deployment)
-├── docker-compose.yml  # Docker Compose for both services
+├── package.json            # Root package.json with npm workspaces
+├── Dockerfile.frontend     # Frontend Dockerfile (production deployment)
+├── Dockerfile.backend      # Backend Dockerfile (production deployment)
+├── Dockerfile.frontend.local # Frontend Dockerfile (local development)
+├── Dockerfile.backend.local  # Backend Dockerfile (local development)
+├── docker-compose.yml      # Docker Compose for production
+├── docker-compose-local.yml # Docker Compose for local development
 └── README.md
 ```
 
@@ -105,7 +108,44 @@ This project is organized as a monorepo with **independent deployment** capabili
 - **Backend** can be deployed independently using `Dockerfile.backend`
 - Both services can run together using `docker-compose.yml`
 
-### Deploy Both Services Together
+### Development with Docker (Local)
+
+For local development with hot-reload support, use the local Dockerfiles:
+
+```cmd
+# Build and run both services with hot-reload
+docker-compose -f docker-compose-local.yml up --build
+
+# Run in detached mode
+docker-compose -f docker-compose-local.yml up -d
+
+# Stop containers
+docker-compose -f docker-compose-local.yml down
+
+# View logs
+docker-compose -f docker-compose-local.yml logs -f
+
+# View logs for specific service
+docker-compose -f docker-compose-local.yml logs -f frontend
+docker-compose -f docker-compose-local.yml logs -f backend
+```
+
+**Features:**
+- ✅ Hot-reload enabled for both frontend and backend
+- ✅ Source code mounted as volumes for instant updates
+- ✅ Development environment variables (`NODE_ENV=development`)
+- ✅ Isolated `node_modules` using named volumes
+
+**Files Used:**
+- `Dockerfile.frontend.local` - Frontend development Dockerfile
+- `Dockerfile.backend.local` - Backend development Dockerfile
+- `docker-compose-local.yml` - Docker Compose configuration for local development
+
+**Note:** Changes to your source code will automatically trigger reloads in both services without rebuilding containers.
+
+### Production Deployment
+
+#### Deploy Both Services Together
 
 ```cmd
 # Build and run both services
@@ -125,7 +165,7 @@ docker-compose logs -f frontend
 docker-compose logs -f backend
 ```
 
-### Deploy Frontend Independently
+#### Deploy Frontend Independently
 
 ```cmd
 # Build frontend image (no build args needed - uses runtime env vars)
@@ -139,7 +179,7 @@ docker run -p 5173:5173 \
 
 **Note:** The frontend now supports **runtime environment variables** via `runtime-config.js` injection. This means you can change `VITE_GOOGLE_CLIENT_ID` without rebuilding the Docker image!
 
-### Deploy Backend Independently
+#### Deploy Backend Independently
 
 ```cmd
 # Build backend image
@@ -152,9 +192,9 @@ docker run -p 3000:3000 \
   dashboard-ai-backend
 ```
 
-### Environment Variables for Docker
+#### Environment Variables for Docker
 
-Create a `.env` file in the root directory for docker-compose:
+Create a `.env` file in the root directory for docker-compose (production):
 
 ```env
 VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
@@ -164,8 +204,23 @@ ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com
 
 Then run:
 ```cmd
+# For production
 docker-compose --env-file .env up --build
+
+# For local development
+docker-compose -f docker-compose-local.yml --env-file .env up --build
 ```
+
+**Docker Files Overview:**
+
+| File | Purpose | Use Case |
+|------|---------|----------|
+| `Dockerfile.frontend` | Production build with static files | Production deployment |
+| `Dockerfile.backend` | Production build with compiled code | Production deployment |
+| `Dockerfile.frontend.local` | Development with hot-reload | Local development |
+| `Dockerfile.backend.local` | Development with hot-reload | Local development |
+| `docker-compose.yml` | Production services | Production deployment |
+| `docker-compose-local.yml` | Development services with volumes | Local development |
 
 ## 🔧 Available Scripts
 

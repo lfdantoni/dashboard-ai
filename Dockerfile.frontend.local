@@ -1,0 +1,20 @@
+# Dockerfile for Frontend Development (Local)
+FROM node:22.13.1
+WORKDIR /app
+
+# 1. Copiar SOLO package.json (ignorando lockfile local)
+COPY frontend/package.json ./
+
+# 2. Instalar dependencias y hacer backup
+# Guardamos node_modules en /tmp para restaurarlo después
+RUN npm install && \
+    mkdir -p /tmp/node_modules_backup && \
+    cp -r node_modules/* /tmp/node_modules_backup/
+
+# 3. Exponer puerto
+EXPOSE 5173
+
+# 4. Script de arranque inteligente
+# Si node_modules está vacío o falta (por el montaje del volumen), lo restauramos desde el backup
+# Si ya existe, intentamos usarlo (persistencia), pero priorizamos la integridad
+CMD ["/bin/sh", "-c", "if [ -z \"$(ls -A /app/node_modules 2>/dev/null)\" ] || [ ! -d \"/app/node_modules/vite\" ]; then echo 'Restoring node_modules from backup...' && cp -r /tmp/node_modules_backup/* /app/node_modules/; fi && if [ ! -f /app/package-lock.json ] || [ ! -s /app/package-lock.json ]; then echo 'Restoring package-lock.json from backup...' && cp /tmp/package-lock.json.backup /app/package-lock.json; fi && npm run dev -- --host 0.0.0.0"]

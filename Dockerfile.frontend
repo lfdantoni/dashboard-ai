@@ -6,15 +6,12 @@ WORKDIR /app
 
 # Copy package files
 COPY frontend/package.json ./
+# Copy package-lock.json if it exists (optional for development)
+# If it doesn't exist, npm install will generate it
 COPY frontend/package-lock.json ./
 
 # Install dependencies respecting package-lock.json
-RUN npm install
-
-# Fix: Force reinstall specific packages that have native bindings issues
-# This forces npm to fetch the correct Linux binaries and link them properly
-RUN npm uninstall lightningcss @tailwindcss/postcss rollup && \
-    npm install lightningcss @tailwindcss/postcss rollup --save-optional
+RUN npm ci
 
 # Copy source code
 COPY frontend/ ./

@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.local
+    container_name: dashboard-ai-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source code for hot-reload
+      - ./frontend:/app
+      # Use named volume for node_modules to avoid overwriting with host directory
+      - frontend-node-modules:/app/node_modules
+    env_file:
+      # Load all environment variables from frontend/.env.local if it exists
+      - ./frontend/.env.local
+    environment:
+      # Default values (can be overridden by env_file)
+      - NODE_ENV=development
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5173', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend.local
+    container_name: dashboard-ai-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot-reload
+      - ./backend:/app
+      # Use named volume for node_modules to avoid overwriting with host directory
+      - backend-node-modules:/app/node_modules
+    env_file:
+      # Load all environment variables from backend/.env.local if it exists
+      - ./backend/.env.local
+    environment:
+      # Default values (can be overridden by env_file)
+      - NODE_ENV=development
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/v1/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  frontend-node-modules:
+  backend-node-modules:
