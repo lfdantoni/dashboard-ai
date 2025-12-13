@@ -13,6 +13,14 @@ RUN npm install && \
 # 3. Exponer puerto
 EXPOSE 3000
 
-# 4. Script de arranque inteligente
-# Restaura node_modules si no existe o está vacío
-CMD ["/bin/sh", "-c", "if [ -z \"$(ls -A /app/node_modules 2>/dev/null)\" ] || [ ! -d \"/app/node_modules/@nestjs\" ]; then echo 'Restoring node_modules from backup...' && cp -r /tmp/node_modules_backup/* /app/node_modules/; fi && if [ ! -f /app/package-lock.json ] || [ ! -s /app/package-lock.json ]; then echo 'Restoring package-lock.json from backup...' && cp /tmp/package-lock.json.backup /app/package-lock.json; fi && npm run start:dev"]
+# 4. Copiar script de inicio (se sobrescribirá con el volumen, pero necesario para el build)
+# Convertir finales de línea CRLF a LF para evitar errores de sintaxis
+COPY backend/start-dev.sh /tmp/start-dev.sh
+RUN sed -i 's/\r$//' /tmp/start-dev.sh && \
+    mv /tmp/start-dev.sh /app/start-dev.sh && \
+    chmod +x /app/start-dev.sh
+
+# 5. Script de arranque inteligente
+# Convierte finales de línea CRLF a LF y ejecuta el script
+# Esto es necesario porque el script se monta como volumen y puede tener CRLF en Windows
+CMD ["sh", "-c", "sed -i 's/\\r$//' /app/start-dev.sh && sh /app/start-dev.sh"]

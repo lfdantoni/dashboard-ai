@@ -45,6 +45,9 @@ services:
     environment:
       # Default values (can be overridden by env_file)
       - NODE_ENV=development
+      # Enable polling for file watching in Docker (required for hot-reload with mounted volumes)
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/v1/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]

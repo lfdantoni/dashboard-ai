@@ -5,10 +5,20 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: '0.0.0.0', // Allow external connections (needed for Docker)
     port: 5173,
+    watch: {
+      usePolling: true, // Enable polling for file changes (needed for Docker volumes)
+      interval: 1000, // Poll interval in milliseconds
+    },
+    hmr: {
+      host: 'localhost', // HMR host for client connection
+      port: 5173,
+    },
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+         // In Docker, use service name 'backend', otherwise use localhost
+        target: process.env.VITE_API_URL || 'http://localhost:3000',
         changeOrigin: true,
       }
     }

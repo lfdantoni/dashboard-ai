@@ -46,4 +46,22 @@
     opacity: 0;
     animation: fadeInUp 0.6s ease-out forwards;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .no-scroll-desktop {
+      overflow: visible !important;
+      overflow-y: visible !important;
+      max-height: none !important;
+      height: auto !important;
+    }
+  }
 }

@@ -31,10 +31,10 @@ export const BookingCard = ({
 }: BookingCardProps) => {
   return (
     <Card className={clsx(BOOKING_CARD_BASE_CLASSES, className)} style={style}>
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-base">{title}</span>
+      <div className="flex justify-between items-center gap-2">
+        <span className="font-semibold text-sm sm:text-base truncate flex-1">{title}</span>
         {status === 'active' && (
-          <div className="w-2.5 h-2.5 bg-[#A7F3D0] rounded-full" />
+          <div className="w-2.5 h-2.5 bg-[#A7F3D0] rounded-full flex-shrink-0" />
         )}
       </div>
       <div className="text-sm text-gray-500">{time}</div>

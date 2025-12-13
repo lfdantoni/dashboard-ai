@@ -21,22 +21,22 @@ export const Login = () => {
 
   return (
     <div className="w-full min-h-screen">
-      <header className="min-h-screen flex flex-col items-center justify-center p-8">
+      <header className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
         <PageHeader
           title="🔐 Login"
           subtitle="Sign in with your Google account"
         />
         
-        <Card className="max-w-[500px]">
+        <Card className="max-w-[500px] w-full">
           <h2 className="mt-0 text-primary">Authentication Required</h2>
-          <p className="mb-6 text-gray-500">
+          <p className="mb-6 text-gray-500 text-sm sm:text-base">
             Please login to access the dashboard
           </p>
           <GoogleLoginButton onLogin={handleLogin} />
         </Card>
 
-        <div className="flex gap-6 mt-8 flex-wrap justify-center">
-          <Button variant="ghost" onClick={() => navigate('/')}>
+        <div className="flex gap-6 mt-6 sm:mt-8 flex-wrap justify-center">
+          <Button variant="ghost" onClick={() => navigate('/')} className="w-full sm:w-auto">
             ← Back to Home
           </Button>
         </div>

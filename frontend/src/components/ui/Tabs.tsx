@@ -17,13 +17,14 @@ const TAB_ACTIVE_CLASSES = 'text-primary border-b-2 border-primary mb-[-0.6rem]'
 
 export const Tabs = ({ items, activeTab, onTabChange, className }: TabsProps) => {
   return (
-    <div className={clsx('flex gap-6 mb-8 border-b border-gray-300 pb-2', className)}>
+    <div className={clsx('flex gap-4 sm:gap-6 mb-6 lg:mb-8 border-b border-gray-300 pb-2 overflow-x-auto scrollbar-hide', className)}>
       {items.map((item) => (
         <div
           key={item.id}
           className={clsx(
             TAB_BASE_CLASSES,
-            activeTab === item.id && TAB_ACTIVE_CLASSES
+            activeTab === item.id && TAB_ACTIVE_CLASSES,
+            'whitespace-nowrap'
           )}
           onClick={() => onTabChange(item.id)}
         >

@@ -11,7 +11,7 @@ export interface UserMenuProps {
   className?: string;
 }
 
-const USER_MENU_BASE_CLASSES = 'flex items-center justify-end gap-4 mb-12 relative';
+const USER_MENU_BASE_CLASSES = 'flex items-center justify-end gap-2 sm:gap-4 mb-8 sm:mb-12 relative';
 
 export const UserMenu = ({ 
   userName, 
@@ -41,13 +41,13 @@ export const UserMenu = ({
 
   return (
     <div className={clsx(USER_MENU_BASE_CLASSES, className)} ref={menuRef}>
-      <Mail size={20} color="#888" />
-      <Bell size={20} color="#888" />
+      <Mail size={20} color="#888" className="hidden sm:block" />
+      <Bell size={20} color="#888" className="hidden sm:block" />
       <div 
-        className="text-right cursor-pointer" 
+        className="text-right cursor-pointer hidden sm:block" 
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="font-bold text-sm">{userName}</div>
+        <div className="font-bold text-sm truncate max-w-[120px]">{userName}</div>
         <div className="text-[0.7rem] text-gray-500">{userRole}</div>
       </div>
       <Avatar

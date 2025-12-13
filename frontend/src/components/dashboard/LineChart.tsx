@@ -296,12 +296,12 @@ export const LineChart = ({ className, style }: LineChartProps) => {
   return (
     <div className={`bg-white rounded-lg p-6 ${className}`} style={style}>
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">Finanzas</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Finanzas</h2>
           <p className="text-sm text-gray-600">Análisis de ingresos y gastos</p>
         </div>
-        <div className="relative range-dropdown">
+        <div className="relative range-dropdown w-full sm:w-auto">
           <button
             onClick={() => setIsRangeOpen(!isRangeOpen)}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -330,10 +330,10 @@ export const LineChart = ({ className, style }: LineChartProps) => {
         </div>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {/* Month Navigation - Only show when "By month" is selected */}
         {selectedRange === 'By month' && (
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-row lg:flex-col items-center gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide">
             <button
               onClick={() => {
                 const minIndex = Math.min(...selectedMonthIndices);
@@ -385,90 +385,94 @@ export const LineChart = ({ className, style }: LineChartProps) => {
           </div>
         )}
 
-        {/* Chart */}
-        <div className="flex-1 relative min-h-[400px]">
-          {isLoading ? (
-            <div className="absolute inset-0 bg-gray-50/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg min-h-[400px]">
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-                <span className="text-sm text-gray-600 font-medium">Cargando datos...</span>
+        {/* Chart Container */}
+        <div className="flex-1 flex flex-col">
+          {/* Chart */}
+          <div className="relative h-[300px] sm:h-[400px]">
+            {isLoading ? (
+              <div className="absolute inset-0 bg-gray-50/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                  <span className="text-sm text-gray-600 font-medium">Cargando datos...</span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={400}>
-            <RechartsLineChart
-              data={chartData}
-              margin={{ top: 10, right: 30, left: 0, bottom: hideXAxis ? 0 : 20 }}
-            >
-              <defs>
-                <pattern
-                  id="gridPattern"
-                  x="0"
-                  y="0"
-                  width="20"
-                  height="20"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <circle cx="1" cy="1" r="1" fill="#e5e7eb" opacity="0.3" />
-                </pattern>
-              </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#e5e7eb"
-                opacity={0.5}
-                fill="url(#gridPattern)"
-              />
-              {!hideXAxis && (
-                <XAxis
-                  dataKey="xValue"
-                  type="number"
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+              <RechartsLineChart
+                data={chartData}
+                margin={{ top: 10, right: 30, left: 0, bottom: hideXAxis ? 0 : 20 }}
+              >
+                <defs>
+                  <pattern
+                    id="gridPattern"
+                    x="0"
+                    y="0"
+                    width="20"
+                    height="20"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle cx="1" cy="1" r="1" fill="#e5e7eb" opacity="0.3" />
+                  </pattern>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#e5e7eb"
+                  opacity={0.5}
+                  fill="url(#gridPattern)"
+                />
+                {!hideXAxis && (
+                  <XAxis
+                    dataKey="xValue"
+                    type="number"
+                    tick={{ fill: '#6b7280', fontSize: 12 }}
+                    tickLine={{ stroke: '#e5e7eb' }}
+                    axisLine={{ stroke: '#e5e7eb' }}
+                    domain={[0, 'dataMax']}
+                    tickFormatter={(_value: number) => {
+                      const dataPoint = chartData[_value];
+                      if (dataPoint) {
+                        return formatXAxisLabel(dataPoint);
+                      }
+                      return '';
+                    }}
+                  />
+                )}
+                <YAxis
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                   tickLine={{ stroke: '#e5e7eb' }}
                   axisLine={{ stroke: '#e5e7eb' }}
-                  domain={[0, 'dataMax']}
-                  tickFormatter={(_value: number) => {
-                    const dataPoint = chartData[_value];
-                    if (dataPoint) {
-                      return formatXAxisLabel(dataPoint);
-                    }
-                    return '';
-                  }}
+                  domain={[Math.floor(minValue * 0.8), Math.ceil(maxValue * 1.2)]}
                 />
-              )}
-              <YAxis
-                tick={{ fill: '#6b7280', fontSize: 12 }}
-                tickLine={{ stroke: '#e5e7eb' }}
-                axisLine={{ stroke: '#e5e7eb' }}
-                domain={[Math.floor(minValue * 0.8), Math.ceil(maxValue * 1.2)]}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="ingresos"
-                stroke="#ef4444"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6, fill: '#ef4444', stroke: 'white', strokeWidth: 2 }}
-                animationDuration={1000}
-                animationEasing="ease-out"
-              />
-              <Line
-                type="monotone"
-                dataKey="gastos"
-                stroke="#a855f7"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6, fill: '#a855f7', stroke: 'white', strokeWidth: 2 }}
-                animationDuration={1000}
-                animationEasing="ease-out"
-              />
-            </RechartsLineChart>
-          </ResponsiveContainer>
-          )}
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="ingresos"
+                  stroke="#ef4444"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6, fill: '#ef4444', stroke: 'white', strokeWidth: 2 }}
+                  animationDuration={1000}
+                  animationEasing="ease-out"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="gastos"
+                  stroke="#a855f7"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6, fill: '#a855f7', stroke: 'white', strokeWidth: 2 }}
+                  animationDuration={1000}
+                  animationEasing="ease-out"
+                />
+              </RechartsLineChart>
+            </ResponsiveContainer>
+            )}
+
+          </div>
 
           {/* Legend and Summary */}
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex gap-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-4">
+            <div className="flex gap-4 sm:gap-6 flex-wrap">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded bg-red-500"></div>
                 <span className="text-sm text-gray-700">Ingresos</span>
@@ -478,8 +482,8 @@ export const LineChart = ({ className, style }: LineChartProps) => {
                 <span className="text-sm text-gray-700">Gastos</span>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-gray-900">
+            <div className="text-left sm:text-right">
+              <div className="text-2xl sm:text-3xl font-bold text-gray-900">
                 ${avgIngresos.toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">Prom. Ingresos</div>

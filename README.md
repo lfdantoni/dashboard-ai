@@ -30,48 +30,9 @@ dashboard-ai/
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v22 or higher)
 - npm (v9 or higher)
-- Docker (optional, for containerized deployment)
-
-### Installation
-
-Install all dependencies from the root:
-
-```cmd
-npm install
-```
-
-This will install dependencies for both frontend and backend using npm workspaces.
-
-### Development
-
-#### Run Both Services
-
-From the root directory:
-
-```cmd
-# Run both frontend and backend
-npm run dev
-
-# Or run individually
-npm run dev:frontend  # Frontend only
-npm run dev:backend   # Backend only
-```
-
-#### Run Services Individually
-
-**Backend:**
-```cmd
-cd backend
-npm run start:dev
-```
-
-**Frontend:**
-```cmd
-cd frontend
-npm run dev
-```
+- Docker (for containerized deployment)
 
 ### 🔐 Google OAuth Setup
 
@@ -171,55 +132,6 @@ docker exec -it dashboard-ai-backend npm install <package-name> --save
 - ✅ Prevents issues with optional dependencies (like `@rollup/rollup-linux-x64-gnu`)
 
 **Alternative (not recommended for production):** Installing packages locally with `npm install` may work, but can cause issues when deploying to production if native binaries differ between Windows and Linux.
-
-### Production Deployment
-
-#### Deploy Both Services Together
-
-```cmd
-# Build and run both services
-docker-compose up --build
-
-# Run in detached mode
-docker-compose up -d
-
-# Stop containers
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# View logs for specific service
-docker-compose logs -f frontend
-docker-compose logs -f backend
-```
-
-#### Deploy Frontend Independently
-
-```cmd
-# Build frontend image (no build args needed - uses runtime env vars)
-docker build -f Dockerfile.frontend -t dashboard-ai-frontend .
-
-# Run frontend container with runtime environment variable
-docker run -p 5173:5173 \
-  -e VITE_GOOGLE_CLIENT_ID=YOUR_CLIENT_ID \
-  dashboard-ai-frontend
-```
-
-**Note:** The frontend now supports **runtime environment variables** via `runtime-config.js` injection. This means you can change `VITE_GOOGLE_CLIENT_ID` without rebuilding the Docker image!
-
-#### Deploy Backend Independently
-
-```cmd
-# Build backend image
-docker build -f Dockerfile.backend -t dashboard-ai-backend .
-
-# Run backend container
-docker run -p 3000:3000 \
-  -e GOOGLE_CLIENT_ID=YOUR_CLIENT_ID \
-  -e ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com \
-  dashboard-ai-backend
-```
 
 #### Environment Variables for Docker
 

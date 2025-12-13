@@ -6,7 +6,7 @@ export interface SearchBarProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   placeholder?: string;
 }
 
-const SEARCH_BAR_BASE_CLASSES = 'bg-white px-4 py-2 rounded-[20px] flex items-center w-[300px] shadow-[0_2px_5px_rgba(0,0,0,0.02)]';
+const SEARCH_BAR_BASE_CLASSES = 'bg-white px-4 py-2 rounded-[20px] flex items-center w-full sm:w-[300px] shadow-[0_2px_5px_rgba(0,0,0,0.02)]';
 
 export const SearchBar = ({ placeholder = 'Search...', className, ...props }: SearchBarProps) => {
   return (

@@ -1,0 +1,81 @@
+{
+  "name": "Dashboard AI - Full Stack Development",
+  
+  // Especifica dónde está tu configuración de Docker Compose
+  "dockerComposeFile": "../docker-compose-local.yml",
+  
+  // Especifica el nombre del servicio principal (donde VS Code se conecta)
+  // Nota: Cuando usas dockerComposeFile, TODOS los servicios del compose se levantan automáticamente
+  "service": "frontend",
+  
+  // Especifica la ruta de trabajo dentro del contenedor
+  // El contenedor frontend monta el código en /app según el docker-compose
+  "workspaceFolder": "/app",
+  
+  // Volúmenes adicionales para acceder al código del backend desde el contenedor frontend
+  // Nota: Estos mounts se agregan además de los volúmenes definidos en docker-compose
+  "mounts": [
+    "source=${localWorkspaceFolder}/backend,target=/workspace/backend,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+  
+  // Extensiones para desarrollo full-stack (Frontend React + Backend NestJS)
+  "extensions": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "firsttris.vscode-jest-runner",
+    "ms-vscode.vscode-typescript-next"
+  ],
+  
+  // Comandos a ejecutar después de crear el contenedor
+  // Verificamos si node_modules existe, si no, instalamos dependencias
+  "postCreateCommand": "if [ ! -d '/app/node_modules' ] || [ -z \"$(ls -A /app/node_modules 2>/dev/null)\" ]; then echo 'Installing dependencies...' && npm install; else echo 'Dependencies already installed'; fi",
+  
+  // Comando a ejecutar después de iniciar el contenedor (cada vez que se conecta)
+  "postStartCommand": "echo 'Container started. Backend should be running on port 3000.'",
+  
+  // Configuración específica de Node/TypeScript para ambos proyectos
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // TypeScript SDK para el frontend (servicio principal)
+        "typescript.tsdk": "/app/node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        
+        // Configuración de ESLint para ambos proyectos
+        "eslint.workingDirectories": [
+          "/app",
+          "/workspace/backend"
+        ],
+        
+        // Configuración de archivos a excluir de la búsqueda
+        "search.exclude": {
+          "**/node_modules": true,
+          "**/dist": true,
+          "**/.git": true
+        },
+        
+        // Configuración de archivos a excluir del explorador
+        "files.exclude": {
+          "**/.git": true,
+          "**/.DS_Store": true
+        }
+      }
+    }
+  },
+  
+  // Configuración de puertos para acceso desde el host
+  // El backend estará disponible en localhost:3000
+  // El frontend estará disponible en localhost:5173
+  "forwardPorts": [3000, 5173],
+  "portsAttributes": {
+    "3000": {
+      "label": "Backend API",
+      "onAutoForward": "notify"
+    },
+    "5173": {
+      "label": "Frontend Dev Server",
+      "onAutoForward": "notify"
+    }
+  }
+}
