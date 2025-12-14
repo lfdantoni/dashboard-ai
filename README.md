@@ -17,12 +17,15 @@ dashboard-ai/
 │   └── nest-cli.json
 │
 ├── package.json            # Root package.json with npm workspaces
-├── Dockerfile.frontend     # Frontend Dockerfile (production deployment)
-├── Dockerfile.backend      # Backend Dockerfile (production deployment)
-├── Dockerfile.frontend.local # Frontend Dockerfile (local development)
-├── Dockerfile.backend.local  # Backend Dockerfile (local development)
-├── docker-compose.yml      # Docker Compose for production
-├── docker-compose-local.yml # Docker Compose for local development
+├── docker/                 # Docker configuration files
+│   ├── dev/                # Development Docker files
+│   │   ├── Dockerfile.frontend.local
+│   │   ├── Dockerfile.backend.local
+│   │   └── docker-compose-local.yml
+│   └── prod/               # Production Docker files
+│       ├── Dockerfile.frontend
+│       └── Dockerfile.backend
+├── .dockerignore           # Docker ignore file (excludes .git for production builds)
 └── README.md
 ```
 
@@ -65,9 +68,9 @@ To enable Google authentication:
 
 This project is organized as a monorepo with **independent deployment** capabilities:
 
-- **Frontend** can be deployed independently using `Dockerfile.frontend`
-- **Backend** can be deployed independently using `Dockerfile.backend`
-- Both services can run together using `docker-compose.yml`
+- **Frontend** can be deployed independently using `docker/prod/Dockerfile.frontend`
+- **Backend** can be deployed independently using `docker/prod/Dockerfile.backend`
+- Both services are deployed independently in production (no shared docker-compose for production)
 
 ### Development with Docker (Local)
 
@@ -75,20 +78,20 @@ For local development with hot-reload support, use the local Dockerfiles:
 
 ```cmd
 # Build and run both services with hot-reload
-docker-compose -f docker-compose-local.yml up --build
+docker-compose -f docker/dev/docker-compose-local.yml up --build
 
 # Run in detached mode
-docker-compose -f docker-compose-local.yml up -d
+docker-compose -f docker/dev/docker-compose-local.yml up -d
 
 # Stop containers
-docker-compose -f docker-compose-local.yml down
+docker-compose -f docker/dev/docker-compose-local.yml down
 
 # View logs
-docker-compose -f docker-compose-local.yml logs -f
+docker-compose -f docker/dev/docker-compose-local.yml logs -f
 
 # View logs for specific service
-docker-compose -f docker-compose-local.yml logs -f frontend
-docker-compose -f docker-compose-local.yml logs -f backend
+docker-compose -f docker/dev/docker-compose-local.yml logs -f frontend
+docker-compose -f docker/dev/docker-compose-local.yml logs -f backend
 ```
 
 **Features:**
@@ -98,11 +101,60 @@ docker-compose -f docker-compose-local.yml logs -f backend
 - ✅ Isolated `node_modules` using named volumes
 
 **Files Used:**
-- `Dockerfile.frontend.local` - Frontend development Dockerfile
-- `Dockerfile.backend.local` - Backend development Dockerfile
-- `docker-compose-local.yml` - Docker Compose configuration for local development
+- `docker/dev/Dockerfile.frontend.local` - Frontend development Dockerfile
+- `docker/dev/Dockerfile.backend.local` - Backend development Dockerfile
+- `docker/dev/docker-compose-local.yml` - Docker Compose configuration for local development
 
 **Note:** Changes to your source code will automatically trigger reloads in both services without rebuilding containers.
+
+#### Development with "Reopen in Container" (Recommended)
+
+**🎯 Recommended approach for the best development experience**, especially to avoid TypeScript type resolution.
+
+The project includes a Dev Container configuration (`.devcontainer/devcontainer.json`) that automatically:
+- ✅ Sets up the correct TypeScript SDK path (`/app/node_modules/typescript/lib`)
+- ✅ Configures ESLint for both frontend and backend
+- ✅ Installs dependencies automatically
+- ✅ Provides proper type resolution without path issues
+- ✅ Mounts both frontend and backend code correctly
+
+**How to use:**
+
+1. **Open Command Palette:**
+   - Press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (Mac)
+
+2. **Select "Reopen in Container":**
+   ```
+   Dev Containers: Reopen in Container
+   ```
+
+3. **Wait for container setup:**
+   - Docker Compose will build and start both services automatically
+   - Dependencies will be installed automatically
+   - TypeScript will be configured correctly
+
+4. **Start developing:**
+   - Frontend: `http://localhost:5173`
+   - Backend: `http://localhost:3000`
+   - Swagger API Docs: `http://localhost:3000/api/docs`
+
+**What happens:**
+- The Dev Container uses `docker/dev/docker-compose-local.yml` to start both services
+- Your workspace folder is `/app` (frontend code)
+- Backend code is accessible at `/workspace/backend`
+- TypeScript uses the container's TypeScript SDK, avoiding Windows path issues
+- All extensions (Prettier, ESLint, TypeScript) are pre-configured
+
+**Benefits:**
+- ✅ **No TypeScript errors** - Types are resolved correctly in the Linux environment
+- ✅ **Consistent environment** - Same Linux environment as production
+- ✅ **Auto-configuration** - No manual setup needed
+- ✅ **Hot-reload works** - Both frontend and backend reload automatically
+- ✅ **Proper node_modules** - Linux-compatible binaries from the start
+
+**Important:** Always use "Reopen in Container" instead of manually attaching to a running container. The Dev Container configuration ensures proper setup of TypeScript, ESLint, and all development tools.
+
+For more details, see `.devcontainer/README.md`.
 
 #### Installing npm Packages with Docker
 
@@ -133,35 +185,24 @@ docker exec -it dashboard-ai-backend npm install <package-name> --save
 
 **Alternative (not recommended for production):** Installing packages locally with `npm install` may work, but can cause issues when deploying to production if native binaries differ between Windows and Linux.
 
-#### Environment Variables for Docker
+#### Environment Variables for Docker Development
 
-Create a `.env` file in the root directory for docker-compose (production):
+For local development with docker-compose, environment variables are loaded from:
+- `frontend/.env.local` (if it exists)
+- `backend/.env.local` (if it exists)
 
-```env
-VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
-GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
-ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com
-```
-
-Then run:
-```cmd
-# For production
-docker-compose --env-file .env up --build
-
-# For local development
-docker-compose -f docker-compose-local.yml --env-file .env up --build
-```
+These files are automatically loaded by `docker-compose-local.yml`. See the [Building Production Docker Images](#building-production-docker-images) section for production deployment.
 
 **Docker Files Overview:**
 
 | File | Purpose | Use Case |
 |------|---------|----------|
-| `Dockerfile.frontend` | Production build with static files | Production deployment |
-| `Dockerfile.backend` | Production build with compiled code | Production deployment |
-| `Dockerfile.frontend.local` | Development with hot-reload | Local development |
-| `Dockerfile.backend.local` | Development with hot-reload | Local development |
-| `docker-compose.yml` | Production services | Production deployment |
-| `docker-compose-local.yml` | Development services with volumes | Local development |
+| `docker/prod/Dockerfile.frontend` | Production build with static files | Production deployment |
+| `docker/prod/Dockerfile.backend` | Production build with compiled code | Production deployment |
+| `docker/dev/Dockerfile.frontend.local` | Development with hot-reload | Local development |
+| `docker/dev/Dockerfile.backend.local` | Development with hot-reload | Local development |
+| `docker/dev/docker-compose-local.yml` | Development services with volumes | Local development |
+| `.dockerignore` | Excludes files from Docker builds | Production builds (excludes .git) |
 
 ## 🔧 Available Scripts
 
@@ -245,15 +286,98 @@ The frontend communicates with the backend through:
 
 ## 🚢 Deployment to EasyPanel / Production
 
+### Building Production Docker Images
+
+#### Frontend Build
+
+Build the frontend production image from the project root:
+
+```cmd
+docker build -f docker/prod/Dockerfile.frontend -t dashboard-ai-frontend:latest .
+```
+
+**Run the frontend container:**
+
+Using environment variables directly:
+```cmd
+docker run -d --name dashboard-ai-frontend-prod -p 5173:5173 -e VITE_GOOGLE_CLIENT_ID=your_google_client_id dashboard-ai-frontend:latest
+```
+
+Or using an `.env` file:
+```cmd
+docker run -d --name dashboard-ai-frontend-prod -p 5173:5173 --env-file frontend/.env dashboard-ai-frontend:latest
+```
+
+**Note:** The frontend uses runtime configuration injection, so `VITE_GOOGLE_CLIENT_ID` can be set as an environment variable at runtime without rebuilding the image.
+
+#### Backend Build
+
+Build the backend production image from the project root:
+
+```cmd
+docker build -f docker/prod/Dockerfile.backend -t dashboard-ai-backend:latest .
+```
+
+**Run the backend container:**
+
+Using environment variables directly:
+```cmd
+docker run -d \
+  --name dashboard-ai-backend \
+  -p 3000:3000 \
+  -e GOOGLE_CLIENT_ID=your_google_client_id \
+  -e ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com \
+  -e NODE_ENV=production \
+  dashboard-ai-backend:latest
+```
+
+Or using an `.env` file:
+```cmd
+docker run -d --name dashboard-ai-backend -p 3000:3000 --env-file backend/.env dashboard-ai-backend:latest
+```
+
+#### Build Options Explained
+
+**Docker Build:**
+- `-f docker/prod/Dockerfile.*` - Specifies the Dockerfile path (relative to build context)
+- `-t <name>:<tag>` - Tags the image with a name and version
+- `.` - Build context (root of the project, where `frontend/` and `backend/` folders are located)
+
+**Docker Run:**
+- `-d` - Run container in detached mode (background)
+- `--name <name>` - Assign a name to the container
+- `-p <host>:<container>` - Map port from host to container
+- `-e <KEY>=<VALUE>` - Set environment variable directly
+- `--env-file <file>` - Load environment variables from a file (one variable per line, format: `KEY=VALUE`)
+
+**Example `.env` files:**
+
+Create `frontend/.env`:
+```env
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+Create `backend/.env`:
+```env
+GOOGLE_CLIENT_ID=your_google_client_id
+ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com
+NODE_ENV=production
+```
+
+**Important:** 
+- Always run `docker build` from the **project root directory** (where `package.json` is located), as the Dockerfiles expect `frontend/` and `backend/` folders to be in the build context.
+- Docker automatically uses the `.dockerignore` file in the build context (project root), which excludes `.git` and other unnecessary files for production builds.
+- The `--env-file` option reads the file path relative to where you run the command, or you can use an absolute path.
+
 ### Frontend Deployment
 
-1. Use `Dockerfile.frontend`
-2. Set build argument: `VITE_GOOGLE_CLIENT_ID`
+1. Use `docker/prod/Dockerfile.frontend`
+2. Set runtime environment variable: `VITE_GOOGLE_CLIENT_ID`
 3. Configure domain to point to port `5173`
 
 ### Backend Deployment
 
-1. Use `Dockerfile.backend`
+1. Use `docker/prod/Dockerfile.backend`
 2. Set environment variables:
    - `GOOGLE_CLIENT_ID`
    - `ALLOWED_ORIGINS` (comma-separated list of allowed origins)
@@ -264,13 +388,13 @@ The frontend communicates with the backend through:
 ### EasyPanel Configuration
 
 **For Frontend:**
-- Dockerfile: `Dockerfile.frontend`
+- Dockerfile: `docker/prod/Dockerfile.frontend`
 - Environment Variables (Runtime): `VITE_GOOGLE_CLIENT_ID=your_client_id`
 - Port: `5173`
 - **Note:** Frontend uses runtime configuration injection, so you can set `VITE_GOOGLE_CLIENT_ID` as an environment variable without rebuilding!
 
 **For Backend:**
-- Dockerfile: `Dockerfile.backend`
+- Dockerfile: `docker/prod/Dockerfile.backend`
 - Environment Variables:
   - `GOOGLE_CLIENT_ID=your_client_id`
   - `ALLOWED_ORIGINS=https://your-frontend-domain.com`

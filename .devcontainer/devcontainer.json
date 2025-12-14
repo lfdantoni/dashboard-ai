@@ -2,7 +2,7 @@
   "name": "Dashboard AI - Full Stack Development",
   
   // Especifica dónde está tu configuración de Docker Compose
-  "dockerComposeFile": "../docker-compose-local.yml",
+  "dockerComposeFile": "../docker/dev/docker-compose-local.yml",
   
   // Especifica el nombre del servicio principal (donde VS Code se conecta)
   // Nota: Cuando usas dockerComposeFile, TODOS los servicios del compose se levantan automáticamente

@@ -14,7 +14,7 @@
 
 1. **Cierra cualquier contenedor que esté corriendo manualmente:**
    ```bash
-   docker-compose -f docker-compose-local.yml down
+   docker-compose -f docker/dev/docker-compose-local.yml down
    ```
 
 2. **Abre la paleta de comandos en Cursor/VS Code:**
@@ -60,7 +60,7 @@ Cuando estás dentro del devcontainer:
 
 ### El backend no se levanta
 - Asegúrate de usar "Reopen in Container", no seleccionar el contenedor directamente
-- Verifica que el archivo `docker-compose-local.yml` esté en la raíz del proyecto
+- Verifica que el archivo `docker/dev/docker-compose-local.yml` esté en la ubicación correcta
 
 ### npm install no se ejecuta
 - El `postCreateCommand` solo se ejecuta cuando usas "Reopen in Container"
@@ -83,10 +83,10 @@ Cuando estás dentro del devcontainer:
 - **Solución:**
   1. **Reconstruye el contenedor del backend** (necesario la primera vez para instalar nodemon):
      ```bash
-     docker-compose -f docker-compose-local.yml build backend
-     docker-compose -f docker-compose-local.yml up -d backend
+     docker-compose -f docker/dev/docker-compose-local.yml build backend
+     docker-compose -f docker/dev/docker-compose-local.yml up -d backend
      ```
-  2. Verifica que las variables de entorno estén configuradas en `docker-compose-local.yml`:
+  2. Verifica que las variables de entorno estén configuradas en `docker/dev/docker-compose-local.yml`:
      ```yaml
      environment:
        - CHOKIDAR_USEPOLLING=true
@@ -94,7 +94,7 @@ Cuando estás dentro del devcontainer:
      ```
   3. Verifica los logs para ver si está usando nodemon:
      ```bash
-     docker-compose -f docker-compose-local.yml logs -f backend
+     docker-compose -f docker/dev/docker-compose-local.yml logs -f backend
      ```
      Deberías ver: `🐳 Docker detected: Using nodemon with polling for hot-reload...`
   4. Si aún no funciona, verifica que el script `start-dev.sh` esté en `backend/start-dev.sh` y tenga permisos de ejecución
