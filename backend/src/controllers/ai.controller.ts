@@ -7,6 +7,8 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
+import { ActionsGuard } from '../guards/actions.guard';
+import { RequireActions } from '../decorators/require-actions.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { GeminiService } from '../services/gemini.service';
 import { AiAnalysisRequest } from '../entities/ai-analysis-request.entity';
@@ -19,11 +21,12 @@ export class AiController {
 
   @Post('analyze')
   @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards(GoogleAuthGuard, ActionsGuard)
+  @RequireActions('ai')
   @ApiBearerAuth()
   @ApiOperation({
     summary:
-      'Analyze a prompt using Gemini AI with optional image support (requires Google authentication)',
+      'Analyze a prompt using Gemini AI with optional image support (requires Google authentication and "ai" action)',
   })
   @ApiResponse({
     status: 200,
@@ -37,6 +40,10 @@ export class AiController {
   @ApiResponse({
     status: 401,
     description: 'Unauthorized - Invalid or missing token',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User does not have required actions (ai)',
   })
   @ApiResponse({
     status: 429,

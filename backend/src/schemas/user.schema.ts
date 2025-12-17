@@ -22,6 +22,13 @@ export class User {
 
   @Prop()
   lastLoginAt?: Date;
+
+  @Prop({
+    type: [String],
+    enum: ['all', 'ai'],
+    default: [],
+  })
+  actions: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -58,6 +58,7 @@ export class GoogleAuthGuard implements CanActivate {
         name: user.name,
         picture: user.picture,
         googleId: user.googleId,
+        actions: user.actions || [],
         // Include Google payload data for backward compatibility
         sub: googlePayload.sub,
         ...googlePayload,

@@ -10,6 +10,7 @@ import { AuthController } from './controllers/auth.controller';
 import { GeminiService } from './services/gemini.service';
 import { AuthService } from './services/auth.service';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { ActionsGuard } from './guards/actions.guard';
 import configuration, { validateConfiguration } from './config/configuration';
 import { User, UserSchema } from './schemas/user.schema';
 import { UserRepository } from './repositories/user.repository';
@@ -52,6 +53,7 @@ import { UserRepository } from './repositories/user.repository';
     AuthService,
     UserRepository,
     GoogleAuthGuard,
+    ActionsGuard,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
