@@ -1,4 +1,5 @@
 import { Controller, Post, UseGuards, Body } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiTags,
   ApiOperation,
@@ -17,6 +18,7 @@ export class AiController {
   constructor(private readonly geminiService: GeminiService) {}
 
   @Post('analyze')
+  @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute
   @UseGuards(GoogleAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
@@ -35,6 +37,10 @@ export class AiController {
   @ApiResponse({
     status: 401,
     description: 'Unauthorized - Invalid or missing token',
+  })
+  @ApiResponse({
+    status: 429,
+    description: 'Too Many Requests - Rate limit exceeded',
   })
   async analyzePrompt(
     @Body() request: AiAnalysisRequest,

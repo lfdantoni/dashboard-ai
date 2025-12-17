@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Sidebar } from '../components/dashboard/Sidebar';
 import { UserMenu } from '../components/dashboard/UserMenu';
@@ -18,9 +19,15 @@ import { ArrowUpRight, Users, Calendar as CalendarIcon, ChevronDown, Menu, X } f
 
 export const Dashboard = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Booking');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAsideOpen, setIsAsideOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   const tabs = [
     { id: 'Booking', label: 'Booking' },
@@ -308,7 +315,7 @@ export const Dashboard = () => {
             userName={user?.name || 'Thomas Gepsan'}
             userRole="Super Admin"
             userAvatar={user?.picture}
-            onLogout={logout}
+            onLogout={handleLogout}
           />
 
           <Calendar

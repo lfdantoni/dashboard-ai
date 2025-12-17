@@ -7,7 +7,7 @@ export interface UserMenuProps {
   userName: string;
   userRole?: string;
   userAvatar?: string;
-  onLogout: () => void;
+  onLogout: () => void | Promise<void>;
   className?: string;
 }
 

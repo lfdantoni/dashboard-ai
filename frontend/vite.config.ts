@@ -20,6 +20,16 @@ export default defineConfig({
          // In Docker, use service name 'backend', otherwise use localhost
         target: process.env.VITE_API_URL || 'http://localhost:3000',
         changeOrigin: true,
+        secure: false,
+        // Ensure cookies are forwarded
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            // Forward cookies from client request
+            if (req.headers.cookie) {
+              proxyReq.setHeader('Cookie', req.headers.cookie);
+            }
+          });
+        },
       }
     }
   },

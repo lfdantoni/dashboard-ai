@@ -15,6 +15,13 @@ export default (): ConfigurationSchema => ({
       ? process.env.ALLOWED_ORIGINS.split(',')
       : ['http://localhost:5173'],
   },
+  mongodb: {
+    mongodbUri: process.env.MONGODB_URI,
+  },
+  throttler: {
+    ttl: parseInt(process.env.THROTTLE_TTL, 10) || 60, // 1 minute
+    limit: parseInt(process.env.THROTTLE_LIMIT, 10) || 10, // 10 requests per minute
+  },
 });
 
 export async function validateConfiguration(

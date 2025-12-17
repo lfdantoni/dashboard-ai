@@ -1,62 +1,65 @@
 import { useState } from 'react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
-
-interface GoogleJwtPayload {
-  iss: string;
-  nbf: number;
-  aud: string;
-  sub: string;
-  email: string;
-  email_verified: boolean;
-  azp: string;
-  name: string;
-  picture: string;
-  given_name: string;
-  family_name: string;
-  iat: number;
-  exp: number;
-  jti: string;
-}
 
 export interface AuthUser {
+  id: string;
   name: string;
   email: string;
-  picture: string;
-  sub: string;
+  picture?: string;
+  googleId: string;
 }
 
 interface Props {
-  onLogin: (user: AuthUser, idToken: string) => void;
+  onLogin: (user: AuthUser) => void;
+  onError?: (error: string) => void;
 }
 
-export const GoogleLoginButton: React.FC<Props> = ({ onLogin }) => {
+export const GoogleLoginButton: React.FC<Props> = ({ onLogin, onError }) => {
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSuccess = (cred: CredentialResponse) => {
+  const handleSuccess = async (cred: CredentialResponse) => {
     if (!cred.credential) {
-      setError('No credential received');
+      const errorMsg = 'No credential received';
+      setError(errorMsg);
+      onError?.(errorMsg);
       return;
     }
+
+    setLoading(true);
+    setError('');
+
     try {
-      const decoded = jwtDecode<GoogleJwtPayload>(cred.credential);
-      const user: AuthUser = {
-        name: decoded.name,
-        email: decoded.email,
-        picture: decoded.picture,
-        sub: decoded.sub,
-      };
-      onLogin(user, cred.credential);
-    } catch (e) {
-      console.error(e);
-      setError('Failed to decode token');
+      // Import authApi dynamically to avoid circular dependencies
+      const { authApi } = await import('../utils/api');
+      
+      // Call backend login endpoint
+      const response = await authApi.login(cred.credential);
+      
+      // Call onLogin with the user from backend response
+      onLogin(response.user);
+    } catch (e: any) {
+      const errorMsg = e?.message || 'Failed to authenticate with server';
+      console.error('Login error:', e);
+      setError(errorMsg);
+      onError?.(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex flex-col items-center">
-      <GoogleLogin onSuccess={handleSuccess} onError={() => setError('Login Failed')} />
-      {error && <p className="text-[#ff6b6b] mt-2">{error}</p>}
+      <GoogleLogin 
+        onSuccess={handleSuccess} 
+        onError={() => {
+          const errorMsg = 'Google login failed';
+          setError(errorMsg);
+          onError?.(errorMsg);
+        }}
+      />
+      {loading && <p className="text-gray-500 mt-2 text-sm">Authenticating...</p>}
+      {error && <p className="text-[#ff6b6b] mt-2 text-sm">{error}</p>}
     </div>
   );
 };

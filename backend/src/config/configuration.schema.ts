@@ -11,10 +11,25 @@ class GeminiConfig {
   apiKey: string;
 }
 
+class MongoDBConfig {
+  @IsString()
+  mongodbUri: string;
+}
+
 class CorsConfig {
   @IsArray()
   @IsString({ each: true })
   allowedOrigins: string[];
+}
+
+class ThrottlerConfig {
+  @IsNumber()
+  @IsOptional()
+  ttl?: number; // Time to live in seconds
+
+  @IsNumber()
+  @IsOptional()
+  limit?: number; // Maximum number of requests
 }
 
 export class ConfigurationSchema {
@@ -33,4 +48,13 @@ export class ConfigurationSchema {
   @ValidateNested()
   @Type(() => CorsConfig)
   cors: CorsConfig;
+
+  @ValidateNested()
+  @Type(() => MongoDBConfig)
+  mongodb: MongoDBConfig;
+
+  @ValidateNested()
+  @Type(() => ThrottlerConfig)
+  @IsOptional()
+  throttler?: ThrottlerConfig;
 }

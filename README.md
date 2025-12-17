@@ -13,6 +13,14 @@ dashboard-ai/
 │
 ├── backend/           # REST API with NestJS
 │   ├── src/
+│   │   ├── config/        # Configuration files
+│   │   ├── controllers/    # API controllers
+│   │   ├── decorators/     # Custom decorators
+│   │   ├── entities/       # DTOs and response entities
+│   │   ├── guards/         # Authentication guards
+│   │   ├── repositories/   # MongoDB repositories
+│   │   ├── schemas/        # Mongoose schemas
+│   │   └── services/       # Business logic services
 │   ├── package.json
 │   └── nest-cli.json
 │
@@ -62,6 +70,26 @@ To enable Google authentication:
 
 **Important:** Both frontend and backend must use the **same** Google Client ID.
 
+### 🗄️ MongoDB Setup
+
+The backend uses MongoDB for data persistence. MongoDB is automatically configured when using Docker Compose.
+
+**For local development with Docker:**
+- MongoDB is automatically started as a service in `docker-compose-local.yml`
+- Connection string defaults to: `mongodb://mongo:27017/dashboard-ai`
+- Data is persisted in a Docker volume: `mongo-data`
+
+**For local development without Docker:**
+- Install MongoDB locally or use MongoDB Atlas
+- Create `.env.local` in `backend/`:
+  ```env
+  MONGODB_URI=mongodb://localhost:27017/dashboard-ai
+  ```
+
+**For production:**
+- Set `MONGODB_URI` environment variable in your deployment platform
+- Example: `mongodb://user:password@host:27017/dashboard-ai?authSource=admin`
+
 ## 🐳 Docker Deployment
 
 ### Monorepo Structure
@@ -92,6 +120,7 @@ docker-compose -f docker/dev/docker-compose-local.yml logs -f
 # View logs for specific service
 docker-compose -f docker/dev/docker-compose-local.yml logs -f frontend
 docker-compose -f docker/dev/docker-compose-local.yml logs -f backend
+docker-compose -f docker/dev/docker-compose-local.yml logs -f mongo
 ```
 
 **Features:**
@@ -99,6 +128,7 @@ docker-compose -f docker/dev/docker-compose-local.yml logs -f backend
 - ✅ Source code mounted as volumes for instant updates
 - ✅ Development environment variables (`NODE_ENV=development`)
 - ✅ Isolated `node_modules` using named volumes
+- ✅ MongoDB service included with persistent data storage
 
 **Files Used:**
 - `docker/dev/Dockerfile.frontend.local` - Frontend development Dockerfile
@@ -191,6 +221,10 @@ For local development with docker-compose, environment variables are loaded from
 - `frontend/.env.local` (if it exists)
 - `backend/.env.local` (if it exists)
 
+**MongoDB Connection:**
+- Default connection string: `mongodb://mongo:27017/dashboard-ai` (automatically set for Docker)
+- To override, set `MONGODB_URI` in `backend/.env.local`
+
 These files are automatically loaded by `docker-compose-local.yml`. See the [Building Production Docker Images](#building-production-docker-images) section for production deployment.
 
 **Docker Files Overview:**
@@ -260,6 +294,62 @@ ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com
 
 If not set, it defaults to `http://localhost:5173`.
 
+## 🏗️ Backend Architecture
+
+### Project Structure
+
+The backend follows NestJS best practices with a clear separation of concerns:
+
+- **`config/`** - Configuration files and environment variable validation
+- **`controllers/`** - API route handlers (REST endpoints)
+- **`decorators/`** - Custom decorators (e.g., `@CurrentUser()`)
+- **`entities/`** - DTOs and response entities for Swagger documentation
+- **`guards/`** - Authentication and authorization guards
+- **`repositories/`** - MongoDB data access layer (Mongoose repositories)
+- **`schemas/`** - Mongoose schemas (database models)
+- **`services/`** - Business logic and external API integrations
+
+### Repositories Pattern
+
+The project uses a **Repository Pattern** for data access:
+
+- **Location**: `backend/src/repositories/`
+- **Purpose**: Encapsulate all database operations for a specific entity
+- **Benefits**: 
+  - Separation of concerns (business logic vs data access)
+  - Easier testing (can mock repositories)
+  - Reusable data access methods
+  - Consistent error handling
+
+**Example Usage:**
+
+```typescript
+import { UserRepository } from './repositories/user.repository';
+
+@Injectable()
+export class UserService {
+  constructor(private userRepository: UserRepository) {}
+
+  async findOrCreateUser(googleUser: GoogleUser) {
+    return this.userRepository.findOrCreate({
+      googleId: googleUser.id,
+      email: googleUser.email,
+      name: googleUser.name,
+      picture: googleUser.picture,
+    });
+  }
+}
+```
+
+**Available Repositories:**
+
+- **`UserRepository`** - User management operations
+  - `findByGoogleId()` - Find user by Google ID
+  - `findByEmail()` - Find user by email
+  - `findOrCreate()` - Find or create user (useful for OAuth)
+  - `updateLastLogin()` - Update last login timestamp
+  - And more CRUD operations...
+
 ## 📝 Technologies Used
 
 ### Backend
@@ -268,6 +358,8 @@ If not set, it defaults to `http://localhost:5173`.
 - Express
 - Swagger/OpenAPI
 - Google Auth Library
+- MongoDB with Mongoose
+- Repository Pattern
 
 ### Frontend
 - React 18
@@ -328,6 +420,7 @@ docker run -d \
   -e GOOGLE_CLIENT_ID=your_google_client_id \
   -e ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com \
   -e NODE_ENV=production \
+  -e MONGODB_URI=mongodb://user:password@host:27017/dashboard-ai?authSource=admin \
   dashboard-ai-backend:latest
 ```
 
@@ -362,6 +455,7 @@ Create `backend/.env`:
 GOOGLE_CLIENT_ID=your_google_client_id
 ALLOWED_ORIGINS=http://localhost:5173,https://your-domain.com
 NODE_ENV=production
+MONGODB_URI=mongodb://user:password@host:27017/dashboard-ai?authSource=admin
 ```
 
 **Important:** 
@@ -399,6 +493,7 @@ NODE_ENV=production
   - `GOOGLE_CLIENT_ID=your_client_id`
   - `ALLOWED_ORIGINS=https://your-frontend-domain.com`
   - `NODE_ENV=production`
+  - `MONGODB_URI=mongodb://user:password@host:27017/dashboard-ai?authSource=admin`
 - Port: `3000`
 - Health Check: `/api/v1/health`
 
@@ -409,7 +504,7 @@ NODE_ENV=production
 ## 📦 Next Steps
 
 - [x] Monorepo structure with independent deployment
-- [ ] Add database (PostgreSQL, MongoDB, etc.)
+- [x] Add database (MongoDB with Mongoose)
 - [ ] Implement JWT authentication
 - [ ] Add more endpoints and features
 - [ ] Add comprehensive tests

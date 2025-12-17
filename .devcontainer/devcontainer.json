@@ -67,7 +67,8 @@
   // Configuración de puertos para acceso desde el host
   // El backend estará disponible en localhost:3000
   // El frontend estará disponible en localhost:5173
-  "forwardPorts": [3000, 5173],
+  // MongoDB estará disponible en localhost:27017
+  "forwardPorts": [3000, 5173, 27017],
   "portsAttributes": {
     "3000": {
       "label": "Backend API",
@@ -76,6 +77,10 @@
     "5173": {
       "label": "Frontend Dev Server",
       "onAutoForward": "notify"
+    },
+    "27017": {
+      "label": "MongoDB",
+      "onAutoForward": "silent"
     }
   }
 }

@@ -15,9 +15,14 @@ export const Login = () => {
     }
   }, [user, navigate]);
 
-  const handleLogin = (user: any, token: string) => {
-    login(user, token);
+  const handleLogin = (user: any) => {
+    login(user);
     navigate('/dashboard');
+  };
+
+  const handleLoginError = (error: string) => {
+    console.error('Login error:', error);
+    // Error is already displayed by GoogleLoginButton
   };
 
   return (
@@ -57,7 +62,7 @@ export const Login = () => {
             </div>
 
             <div className="flex justify-center w-full py-2">
-              <GoogleLoginButton onLogin={handleLogin} />
+              <GoogleLoginButton onLogin={handleLogin} onError={handleLoginError} />
             </div>
 
             <div className="relative">

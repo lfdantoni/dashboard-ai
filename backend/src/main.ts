@@ -2,11 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  // Enable cookie parser
+  app.use(cookieParser());
 
   // Configurar prefijo global
   app.setGlobalPrefix('api');
@@ -33,6 +37,7 @@ async function bootstrap() {
     .addTag('health')
     .addTag('dashboard')
     .addTag('ai')
+    .addTag('auth')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
