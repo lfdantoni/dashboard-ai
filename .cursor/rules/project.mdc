@@ -75,4 +75,5 @@ This is a full-stack application with:
 - Follow existing code patterns and structure
 - Keep functions focused and single-purpose
 - Handle errors appropriately with proper error messages
+- Update readme file on any architecture change
 

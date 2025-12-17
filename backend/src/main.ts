@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { VersioningType } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   // Configurar prefijo global
   app.setGlobalPrefix('api');
@@ -16,9 +18,7 @@ async function bootstrap() {
   });
 
   // Habilitar CORS para el frontend
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['http://localhost:5173'];
+  const allowedOrigins = configService.get<string[]>('cors.allowedOrigins');
 
   app.enableCors({
     origin: allowedOrigins,
@@ -26,19 +26,21 @@ async function bootstrap() {
   });
 
   // Configuración de Swagger
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Dashboard AI API')
     .setDescription('API REST para Dashboard AI')
     .setVersion('1.0')
     .addTag('health')
     .addTag('dashboard')
+    .addTag('ai')
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(3000);
-  console.log('🚀 Backend corriendo en http://localhost:3000');
-  console.log('📚 Swagger docs disponible en http://localhost:3000/api/docs');
+  const port = configService.get<number>('port');
+  await app.listen(port);
+  console.log(`🚀 Backend corriendo en http://localhost:${port}`);
+  console.log(`📚 Swagger docs disponible en http://localhost:${port}/api/docs`);
 }
 bootstrap();
