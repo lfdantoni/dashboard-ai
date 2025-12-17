@@ -279,6 +279,7 @@ All API endpoints use the `/api/v1` prefix:
 - `GET /api/v1` - Welcome message
 - `GET /api/v1/health` - Service health check
 - `GET /api/v1/dashboard-info` - Protected endpoint (requires Google token)
+- `POST /api/v1/ai/analyze` - AI analysis endpoint (requires Google token + `'ai'` action)
 
 **📚 API Documentation:**
 - Swagger UI: `http://localhost:3000/api/docs`
@@ -302,9 +303,9 @@ The backend follows NestJS best practices with a clear separation of concerns:
 
 - **`config/`** - Configuration files and environment variable validation
 - **`controllers/`** - API route handlers (REST endpoints)
-- **`decorators/`** - Custom decorators (e.g., `@CurrentUser()`)
+- **`decorators/`** - Custom decorators (e.g., `@CurrentUser()`, `@RequireActions()`)
 - **`entities/`** - DTOs and response entities for Swagger documentation
-- **`guards/`** - Authentication and authorization guards
+- **`guards/`** - Authentication and authorization guards (GoogleAuthGuard, ActionsGuard)
 - **`repositories/`** - MongoDB data access layer (Mongoose repositories)
 - **`schemas/`** - Mongoose schemas (database models)
 - **`services/`** - Business logic and external API integrations
@@ -349,6 +350,67 @@ export class UserService {
   - `findOrCreate()` - Find or create user (useful for OAuth)
   - `updateLastLogin()` - Update last login timestamp
   - And more CRUD operations...
+
+### User Actions System
+
+The backend implements a **role-based action system** for fine-grained access control:
+
+#### User Schema
+
+Users have an `actions` field (array of strings) that defines what actions they can perform:
+- **`'all'`** - Grants access to all endpoints (superuser)
+- **`'ai'`** - Grants access to AI-related endpoints
+
+**Example User Document:**
+```typescript
+{
+  googleId: "123456789",
+  email: "user@example.com",
+  name: "John Doe",
+  actions: ["ai"],  // User can only access AI endpoints
+  isActive: true
+}
+```
+
+#### Protecting Endpoints with Actions
+
+Use the `@RequireActions()` decorator combined with `ActionsGuard` to restrict endpoint access:
+
+```typescript
+import { UseGuards } from '@nestjs/common';
+import { GoogleAuthGuard } from '../guards/google-auth.guard';
+import { ActionsGuard } from '../guards/actions.guard';
+import { RequireActions } from '../decorators/require-actions.decorator';
+
+@Controller('ai')
+export class AiController {
+  @Post('analyze')
+  @UseGuards(GoogleAuthGuard, ActionsGuard)
+  @RequireActions('ai')
+  async analyzePrompt() {
+    // Only users with 'ai' action or 'all' action can access this
+  }
+}
+```
+
+#### How It Works
+
+1. **Authentication**: `GoogleAuthGuard` verifies the user's Google token and loads user data (including `actions`) into `request.user`
+2. **Authorization**: `ActionsGuard` checks if the user has the required actions:
+   - If user has `'all'` action → Access granted to all endpoints
+   - If user has all required actions → Access granted
+   - Otherwise → Returns `403 Forbidden` with error message
+
+#### Available Guards
+
+- **`GoogleAuthGuard`** - Verifies Google OAuth token and loads user from database
+- **`ActionsGuard`** - Checks user actions against endpoint requirements
+
+#### Available Decorators
+
+- **`@CurrentUser()`** - Extracts the authenticated user from the request
+- **`@RequireActions(...actions)`** - Specifies required actions for an endpoint
+  - Example: `@RequireActions('ai')` or `@RequireActions('ai', 'other-action')`
 
 ## 📝 Technologies Used
 
@@ -505,6 +567,7 @@ MONGODB_URI=mongodb://user:password@host:27017/dashboard-ai?authSource=admin
 
 - [x] Monorepo structure with independent deployment
 - [x] Add database (MongoDB with Mongoose)
+- [x] Implement user actions system for fine-grained access control
 - [ ] Implement JWT authentication
 - [ ] Add more endpoints and features
 - [ ] Add comprehensive tests
