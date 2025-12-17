@@ -60,9 +60,8 @@ export const env = {
   get VITE_GOOGLE_CLIENT_ID() {
     return getEnvVar('VITE_GOOGLE_CLIENT_ID');
   },
-  // Add more getters as needed
-  // get VITE_API_URL() {
-  //   return getEnvVar('VITE_API_URL');
-  // },
+  get VITE_API_URL() {
+    return getEnvVar('VITE_API_URL');
+  },
 };
 

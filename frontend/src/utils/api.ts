@@ -1,8 +1,11 @@
 /**
  * API utility for making HTTP requests to the backend
  */
+
+import { env } from "./env";
+
 // API_BASE_URL only has base url, such as http://localhost:3000, not the full url with the version, such as http://localhost:3000/api/v1
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+const API_BASE_URL = env.VITE_API_URL || '/api/v1';
 
 export interface ApiError {
   message: string;
